@@ -83,7 +83,7 @@ def sort_players(players, filters = {}):
             
             result.append((not checked, needs_browsing, player.order, player.clean_title.lower(), player))
     
-    result.sort()
+    result.sort(key=lambda tup: tup[3])
     return [x[-1] for x in result]
     
 def get_needed_langs(players):
