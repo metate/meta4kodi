@@ -80,6 +80,16 @@ def tv():
             'path': plugin.url_for(tv_trakt_calendar),
             'icon': get_icon_path("tv"), # TODO
         },
+        {
+            'label': _("Trakt liked lists"),
+            'path': plugin.url_for(tv_trakt_liked_lists),
+            'icon': get_icon_path("tv"),  # TODO
+        },
+        {
+            'label': _("Trakt my lists"),
+            'path': plugin.url_for(tv_trakt_my_lists),
+            'icon': get_icon_path("tv"),  # TODO
+        }
     ]
     
     fanart = plugin.addon.getAddonInfo('fanart')
@@ -168,6 +178,89 @@ def tv_trakt_calendar():
     from trakt import trakt
     result = trakt.trakt_get_calendar()
     return list_trakt_episodes(result, with_time=True)
+
+@plugin.route('/tv/trakt/liked_lists')
+def tv_trakt_liked_lists():
+    from trakt import trakt
+    lists = trakt.trakt_get_liked_lists()
+    items = []
+    for list in lists:
+        info = list["list"]
+        name = info["name"]
+        user = info["user"]["username"]
+        slug = info["ids"]["slug"]
+        items.append({
+            'label': name,
+            'path': plugin.url_for(tv_trakt_show_list, user = user, slug = slug),
+            'icon': get_icon_path("tv"),  # TODO
+        })
+    return sorted(items,key = lambda item: item["label"])
+
+@plugin.route('/tv/trakt/my_lists')
+def tv_trakt_my_lists():
+    from trakt import trakt
+    lists = trakt.trakt_get_lists()
+    items = []
+    for list in lists:
+        name = list["name"]
+        user = list["user"]["username"]
+        slug = list["ids"]["slug"]
+        items.append({
+            'label': name,
+            'path': plugin.url_for(tv_trakt_show_list, user = user, slug = slug),
+            'icon': get_icon_path("tv"),  # TODO
+        })
+    return sorted(items,key = lambda item: item["label"])
+
+@plugin.route('/tv/trakt/show_list/<user>/<slug>')
+def tv_trakt_show_list(user, slug):
+    from trakt import trakt
+    genres_dict = trakt_get_genres()
+    list_items = trakt.get_list(user, slug)
+    items = []
+    for list_item in list_items:
+        item = None
+        type = list_item["type"]
+        if type == "show":
+            show_title = list_item["show"]["title"]
+            tvdb_id = list_item["show"]["ids"]["tvdb"]
+            item = ({
+                'label': show_title,
+                'path': plugin.url_for(tv_tvshow, id=tvdb_id)
+            })
+        elif type == "season":
+            show_title = list_item["show"]["title"]
+            season_number = list_item["season"]["number"]
+            label = "{0} - Season {1}".format(show_title, season_number)
+            tvdb_id = list_item["show"]["ids"]["tvdb"]
+            item = ({
+                'label': label,
+                'path': plugin.url_for(tv_season, id = tvdb_id, season_num = season_number)
+            })
+        elif type == "episode":
+            show_title = list_item["show"]["title"]
+            episode_title = list_item["episode"]["title"]
+            season_number = list_item["episode"]["season"]
+            episode_number = list_item["episode"]["number"]
+            tvdb_id = list_item["show"]["ids"]["tvdb"]
+            label = "{0} - S{1}E{2} - {3}".format(show_title, season_number, episode_number, episode_title)
+            item = ({
+                'label': label,
+                'path': plugin.url_for("tv_play", id=tvdb_id, season=season_number,
+                                       episode=episode_number, mode='default')
+            })
+        elif type == "movie":
+            from meta.navigation.movies import movies_play
+            movie_title = list_item["movie"]["title"]
+            id = list_item["movie"]["ids"]["tmdb"]
+            item = ({
+                'label': movie_title,
+                'path': plugin.url_for("movies_play", src = "tmdb", id=id, mode = "default")
+            })
+
+        if item is not None:
+            items.append(item)
+    return items
     
 @plugin.cached_route('/tv/genre/<id>/<page>', TTL=CACHE_TTL)
 def tv_genre(id, page):

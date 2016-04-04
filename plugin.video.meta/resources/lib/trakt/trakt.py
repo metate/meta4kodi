@@ -133,6 +133,7 @@ def trakt_refresh_token():
         plugin.set_setting(SETTING_TRAKT_REFRESH_TOKEN, response["refresh_token"])
 
 
+@plugin.route('/authenticate_trakt')
 def trakt_authenticate():
     code = trakt_get_device_code()
     token = trakt_get_device_token(code)
@@ -153,16 +154,16 @@ def trakt_get_watchlist(type):
     return call_trakt("sync/watchlist/{0}".format(type), params={'extended':'full,images'})
 
 @plugin.cached(TTL=CACHE_TTL, cache="trakt")
-def trakt_get_lists(self):
+def trakt_get_lists():
     return call_trakt("users/me/lists")
 
 @plugin.cached(TTL=CACHE_TTL, cache="trakt")
-def trakt_get_liked_lists(self):
+def trakt_get_liked_lists():
     return call_trakt("users/likes/lists")
 
 @plugin.cached(TTL=CACHE_TTL, cache="trakt")
-def get_list(self, list_slug):
-    path = "users/me/lists/{0}/items".format(list_slug)
+def get_list(user,list_slug):
+    path = "users/{0}/lists/{1}/items".format(user, list_slug)
     return call_trakt(path, params={'extended':'full,images'})
 
 def add_list(self, name, privacy_id=None, description=None):
@@ -209,3 +210,7 @@ def trakt_get_next_episodes():
 @plugin.cached(TTL=CACHE_TTL, cache="trakt")
 def trakt_get_hidden_items(type):
     return call_trakt("users/hidden/{0}".format(type))
+
+@plugin.cached(TTL=CACHE_TTL, cache="trakt")
+def trakt_get_show(id):
+    return call_trakt("shows/{0}".format(id), params={'extended': 'full,images'})
