@@ -162,7 +162,7 @@ def trakt_authenticate():
     token = trakt_get_device_token(code)
     if token:
         expires_at = time.time() + 60*60*24*30#*3
-        plugin.set_setting(SETTING_TRAKT_EXPIRES_AT, expires_at)
+        plugin.set_setting(SETTING_TRAKT_EXPIRES_AT, str(expires_at))
         plugin.set_setting(SETTING_TRAKT_ACCESS_TOKEN, token["access_token"])
         plugin.set_setting(SETTING_TRAKT_REFRESH_TOKEN, token["refresh_token"])
         return True
@@ -185,11 +185,11 @@ def trakt_get_liked_lists():
     return call_trakt("users/likes/lists", pagination= True)
 
 @plugin.cached(TTL=CACHE_TTL, cache="trakt")
-def get_list(user,list_slug):
+def get_list(user, list_slug):
     path = "users/{0}/lists/{1}/items".format(user, list_slug)
     return call_trakt(path, params={'extended':'full,images'})
 
-def add_list(self, name, privacy_id=None, description=None):
+def add_list(name, privacy_id=None, description=None):
     data = {
         'name': name,
         'description': description or '',
@@ -197,7 +197,7 @@ def add_list(self, name, privacy_id=None, description=None):
     }
     return call_trakt("users/me/lists", data=data)
 
-def del_list(self, list_slug):
+def del_list(list_slug):
     path = "users/me/lists/{0}".format(list_slug)
     return call_trakt(path, is_delete=True)
     
