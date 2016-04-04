@@ -239,5 +239,17 @@ def get_show(id):
     return call_trakt("shows/{0}".format(id), params={'extended': 'full,images'})
 
 @plugin.cached(TTL=CACHE_TTL, cache="trakt")
+def get_season(id,season_number):
+    seasons = call_trakt("shows/{0}/seasons".format(id), params={'extended': 'images'})
+    for season in seasons:
+        if season["number"] == season_number:
+            return season
+
+@plugin.cached(TTL=CACHE_TTL, cache="trakt")
+def get_episode(id, season, episode):
+    return call_trakt("shows/{0}/seasons/{1}/episodes/{2}".format(id, season, episode),
+                      params={'extended': 'full,images'})
+
+@plugin.cached(TTL=CACHE_TTL, cache="trakt")
 def get_movie(id):
     return call_trakt("movies/{0}".format(id), params={'extended': 'full,images'})
