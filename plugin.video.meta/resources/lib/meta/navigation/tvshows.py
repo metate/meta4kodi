@@ -221,22 +221,44 @@ def tv_trakt_show_list(user, slug):
     for list_item in list_items:
         item = None
         type = list_item["type"]
+
         if type == "show":
-            show_title = list_item["show"]["title"]
-            tvdb_id = list_item["show"]["ids"]["tvdb"]
-            item = ({
-                'label': show_title,
-                'path': plugin.url_for(tv_tvshow, id=tvdb_id)
-            })
+            trakt_id = list_item["show"]["ids"]["trakt"]
+            tvshow_info = trakt.get_show(trakt_id)
+            item = make_tvshow_item(get_tvshow_metadata_trakt(tvshow_info, genres_dict))
+
         elif type == "season":
+            import_tvdb()
             show_title = list_item["show"]["title"]
             season_number = list_item["season"]["number"]
             label = "{0} - Season {1}".format(show_title, season_number)
             tvdb_id = list_item["show"]["ids"]["tvdb"]
+            show = tvdb[tvdb_id]
+            show_info = get_tvshow_metadata_tvdb(show, banners=False)
+            season = show[season_number]
+            season_info = get_season_metadata_tvdb(show_info, season, banners=True)
+
+            context_menu = [
+                (
+                    _("Add to library"),
+                    "RunPlugin({0})".format(plugin.url_for("tv_add_to_library", id=tvdb_id))
+                ),
+                (
+                    _("Show info"), 'Action(Info)'
+                )
+            ]
+
             item = ({
                 'label': label,
-                'path': plugin.url_for(tv_season, id = tvdb_id, season_num = season_number)
+                'path': plugin.url_for(tv_season, id=tvdb_id, season_num=season_number),
+                'context_menu': context_menu,
+                'info': show_info,
+                'thumbnail': season_info['poster'],
+                'icon': "DefaultVideo.png",
+                'poster': season_info['poster'],
+                'properties': {'fanart_image': season_info['fanart']},
             })
+
         elif type == "episode":
             show_title = list_item["show"]["title"]
             episode_title = list_item["episode"]["title"]
@@ -250,13 +272,14 @@ def tv_trakt_show_list(user, slug):
                                        episode=episode_number, mode='default')
             })
         elif type == "movie":
-            from meta.navigation.movies import movies_play
-            movie_title = list_item["movie"]["title"]
-            id = list_item["movie"]["ids"]["tmdb"]
-            item = ({
-                'label': movie_title,
-                'path': plugin.url_for("movies_play", src = "tmdb", id=id, mode = "default")
-            })
+            from meta.navigation.movies import movies_play, make_movie_item
+            from meta.info import get_trakt_movie_metadata
+            tmdb_id = list_item["movie"]["ids"]["tmdb"]
+            trakt_id = list_item["movie"]["ids"]["trakt"]
+            trakt_movie = trakt.get_movie(trakt_id)
+            movie_info = get_trakt_movie_metadata(trakt_movie)
+
+            item = make_movie_item(movie_info)
 
         if item is not None:
             items.append(item)
@@ -502,7 +525,7 @@ def make_tvshow_item(info):
     ]
              
     return {'label': info['title'],
-            'path': plugin.url_for(tv_tvshow, id=tvdb_id),
+            'path': plugin.url_for("tv_tvshow", id=tvdb_id),
             'context_menu': context_menu,
             'thumbnail': info['poster'],
             'icon': "DefaultVideo.png",

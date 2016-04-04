@@ -235,5 +235,9 @@ def trakt_get_hidden_items(type):
     return call_trakt("users/hidden/{0}".format(type))
 
 @plugin.cached(TTL=CACHE_TTL, cache="trakt")
-def trakt_get_show(id):
+def get_show(id):
     return call_trakt("shows/{0}".format(id), params={'extended': 'full,images'})
+
+@plugin.cached(TTL=CACHE_TTL, cache="trakt")
+def get_movie(id):
+    return call_trakt("movies/{0}".format(id), params={'extended': 'full,images'})

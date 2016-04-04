@@ -252,11 +252,11 @@ def make_movie_item(movie_info):
     context_menu = [
      (
        _("Select stream..."),
-       "PlayMedia({0})".format(plugin.url_for(movies_play, src=src, id=id, mode='select'))
+       "PlayMedia({0})".format(plugin.url_for("movies_play", src=src, id=id, mode='select'))
      ),                
      (
       _("Add to library"), 
-      "RunPlugin({0})".format(plugin.url_for(movies_add_to_library, src=src, id=id))
+      "RunPlugin({0})".format(plugin.url_for("movies_add_to_library", src=src, id=id))
      ),
      (
       _("Show info"),
@@ -266,7 +266,7 @@ def make_movie_item(movie_info):
     
     return {
         'label': movie_info['title'],
-        'path': plugin.url_for(movies_play, src=src, id=id, mode='default'),
+        'path': plugin.url_for("movies_play", src=src, id=id, mode='default'),
         'context_menu': context_menu,
         'thumbnail': movie_info['poster'],
         'icon': "DefaultVideo.png",
