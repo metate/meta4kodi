@@ -72,6 +72,11 @@ def movies():
                 )
             ],
         },
+        {
+            'label': _("Trakt recommendations"),
+            'path': plugin.url_for(movies_trakt_recommendations),
+            'icon': get_icon_path("movies"),  # TODO
+        },
     ]
 
     fanart = plugin.addon.getAddonInfo('fanart')
@@ -144,6 +149,16 @@ def movies_trakt_watchlist():
     from trakt import trakt
     result = trakt.trakt_get_watchlist("movies")
     return plugin.finish(list_trakt_movies(result), sort_methods=MOVIE_SORT_METHODS)
+
+@plugin.route('/movies/trakt/recommendations')
+def movies_trakt_recommendations():
+    from trakt import trakt
+    genres_dict = dict([(x['slug'], x['name']) for x in trakt.trakt_get_genres("movies")])
+    movies = trakt.get_recommendations("movies")
+    items = []
+    for movie in movies:
+        items.append(make_movie_item(get_trakt_movie_metadata(movie, genres_dict)))
+    return items
     
 @plugin.route('/movies/trakt/collection_to_library')
 def movies_trakt_collection_to_library():

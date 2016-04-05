@@ -252,3 +252,7 @@ def get_episode(id, season, episode):
 @plugin.cached(TTL=CACHE_TTL, cache="trakt")
 def get_movie(id):
     return call_trakt("movies/{0}".format(id), params={'extended': 'full,images'})
+
+@plugin.cached(TTL=CACHE_TTL, cache="trakt")
+def get_recommendations(type):
+    return call_trakt("/recommendations/{0}".format(type), params={'extended': 'full,images'})

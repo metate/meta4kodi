@@ -82,6 +82,11 @@ def tv():
             'path': plugin.url_for(tv_trakt_calendar),
             'icon': get_icon_path("tv"), # TODO
         },
+        {
+            'label': _("Trakt recommendations"),
+            'path': plugin.url_for(tv_trakt_recommendations),
+            'icon': get_icon_path("tv"),  # TODO
+        },
     ]
     
     fanart = plugin.addon.getAddonInfo('fanart')
@@ -170,6 +175,16 @@ def tv_trakt_calendar():
     from trakt import trakt
     result = trakt.trakt_get_calendar()
     return list_trakt_episodes(result, with_time=True)
+
+@plugin.route('/tv/trakt/recommendations')
+def tv_trakt_recommendations():
+    from trakt import trakt
+    genres_dict = trakt.trakt_get_genres("tv")
+    shows = trakt.get_recommendations("shows")
+    items = []
+    for show in shows:
+        items.append(make_tvshow_item(get_tvshow_metadata_trakt(show, genres_dict)))
+    return items
     
 @plugin.cached_route('/tv/genre/<id>/<page>', TTL=CACHE_TTL)
 def tv_genre(id, page):
