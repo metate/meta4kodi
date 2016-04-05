@@ -36,7 +36,7 @@ def lists_trakt_liked_lists():
         slug = info["ids"]["slug"]
         items.append({
             'label': name,
-            'path': plugin.url_for(lists_trakt_show_list, user = user, slug = slug),
+            'path': plugin.url_for("lists_trakt_show_list", user = user, slug = slug),
             'icon': get_icon_path("tv"),  # TODO
         })
     return sorted(items,key = lambda item: item["label"])
@@ -58,14 +58,23 @@ def lists_trakt_my_lists():
 
 @plugin.route('/lists/trakt/show_list/<user>/<slug>')
 def lists_trakt_show_list(user, slug):
-    genres_dict = trakt.trakt_get_genres("tv")
     list_items = trakt.get_list(user, slug)
-    items = []
-    for list_item in list_items:
-        item = None
-        type = list_item["type"]
+    return _lists_trakt_show_list(list_items)
 
-        if type == "show":
+@plugin.route('/lists/trakt/_show_list/<list_items>')
+def _lists_trakt_show_list(list_items):
+    genres_dict = trakt.trakt_get_genres("tv")
+
+    if type(list_items) == str:
+        import urllib
+        list_items = eval(urllib.unquote(list_items))
+
+    items = []
+    for list_item in list_items[:25]:
+        item = None
+        item_type = list_item["type"]
+
+        if item_type == "show":
             tvdb_id = list_item["show"]["ids"]["tvdb"]
             show = list_item["show"]
             info = get_tvshow_metadata_trakt(show, genres_dict)
@@ -93,7 +102,7 @@ def lists_trakt_show_list(user, slug):
                 'info': info
             })
 
-        elif type == "season":
+        elif item_type == "season":
             tvdb_id = list_item["show"]["ids"]["tvdb"]
             season = list_item["season"]
             show = list_item["show"]
@@ -123,7 +132,7 @@ def lists_trakt_show_list(user, slug):
                 'properties': {'fanart_image': season_info['fanart']},
             })
 
-        elif type == "episode":
+        elif item_type == "episode":
             tvdb_id = list_item["show"]["ids"]["tvdb"]
 
             episode = list_item["episode"]
@@ -165,7 +174,7 @@ def lists_trakt_show_list(user, slug):
                 'properties': {'fanart_image': episode_info['fanart']},
                       })
 
-        elif type == "movie":
+        elif item_type == "movie":
             movie = list_item["movie"]
             movie_info = get_trakt_movie_metadata(movie)
 
@@ -173,4 +182,9 @@ def lists_trakt_show_list(user, slug):
 
         if item is not None:
             items.append(item)
+    if len(list_items) >= 25:
+        items.append({
+            'label': _('Next >>'),
+            'path': plugin.url_for(_lists_trakt_show_list, list_items=str(list_items[25:]))
+        })
     return items
