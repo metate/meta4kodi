@@ -66,18 +66,40 @@ def lists_trakt_show_list(user, slug):
         type = list_item["type"]
 
         if type == "show":
-            trakt_id = list_item["show"]["ids"]["trakt"]
-            tvshow = trakt.get_show(trakt_id)
-            item = make_tvshow_item(get_tvshow_metadata_trakt(tvshow, genres_dict))
+            tvdb_id = list_item["show"]["ids"]["tvdb"]
+            show = list_item["show"]
+            info = get_tvshow_metadata_trakt(show, genres_dict)
+
+            context_menu = [
+                (
+                    _("Add to library"),
+                    "RunPlugin({0})".format(plugin.url_for("tv_add_to_library", id=tvdb_id))
+                ),
+                (
+                    _("Show info"), 'Action(Info)'
+                )
+            ]
+
+            item = ({
+                'label': info['title'],
+                'path': plugin.url_for("tv_tvshow", id=tvdb_id),
+                'context_menu': context_menu,
+                'thumbnail': info['poster'],
+                'icon': "DefaultVideo.png",
+                'poster': info['poster'],
+                'properties' : {'fanart_image' : info['fanart']},
+                'info_type': 'video',
+                'stream_info': {'video': {}},
+                'info': info
+            })
 
         elif type == "season":
             tvdb_id = list_item["show"]["ids"]["tvdb"]
-            trakt_id = list_item["show"]["ids"]["trakt"]
-            tvshow = trakt.get_show(trakt_id)
-            tvshow_info = get_tvshow_metadata_trakt(tvshow, genres_dict)
-            season = trakt.get_season(trakt_id,list_item["season"]["number"])
-            season_info = get_season_metadata_trakt(tvshow_info, season)
-            label = "{0} - Season {1}".format(tvshow_info["title"],season_info["season"])
+            season = list_item["season"]
+            show = list_item["show"]
+            show_info = get_tvshow_metadata_trakt(show, genres_dict)
+            season_info = get_season_metadata_trakt(show_info,season, genres_dict)
+            label = "{0} - Season {1}".format(show["title"],season["number"])
 
 
             context_menu = [
@@ -94,7 +116,7 @@ def lists_trakt_show_list(user, slug):
                 'label': label,
                 'path': plugin.url_for(tv_season, id=tvdb_id, season_num=list_item["season"]["number"]),
                 'context_menu': context_menu,
-                'info': tvshow_info,
+                'info': season_info,
                 'thumbnail': season_info['poster'],
                 'icon': "DefaultVideo.png",
                 'poster': season_info['poster'],
@@ -102,19 +124,17 @@ def lists_trakt_show_list(user, slug):
             })
 
         elif type == "episode":
-            trakt_id = list_item["show"]["ids"]["trakt"]
             tvdb_id = list_item["show"]["ids"]["tvdb"]
 
-            season_number = list_item["episode"]["season"]
-            episode_number = list_item["episode"]["number"]
+            episode = list_item["episode"]
+            show = list_item["show"]
 
-            tvshow = trakt.get_show(trakt_id)
-            tvshow_info = get_tvshow_metadata_trakt(tvshow, genres_dict)
-            season = trakt.get_season(trakt_id, season_number)
-            season_info = get_season_metadata_trakt(tvshow_info, season)
-            episode = trakt.get_episode(trakt_id,season_number, episode_number)
-            episode_info = get_episode_metadata_trakt(season_info, episode)
-            label = "{0} - S{1}E{2} - {3}".format(tvshow_info["title"], season_number,
+            season_number = episode["season"]
+            episode_number = episode["number"]
+
+            show_info = get_tvshow_metadata_trakt(show, genres_dict)
+            episode_info = get_episode_metadata_trakt(show_info, episode)
+            label = "{0} - S{1}E{2} - {3}".format(show_info["title"], season_number,
                                                   episode_number, episode_info["title"])
 
             context_menu = [
@@ -146,9 +166,8 @@ def lists_trakt_show_list(user, slug):
                       })
 
         elif type == "movie":
-            trakt_id = list_item["movie"]["ids"]["trakt"]
-            trakt_movie = trakt.get_movie(trakt_id)
-            movie_info = get_trakt_movie_metadata(trakt_movie)
+            movie = list_item["movie"]
+            movie_info = get_trakt_movie_metadata(movie)
 
             item = make_movie_item(movie_info)
 

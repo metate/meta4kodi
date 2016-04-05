@@ -167,8 +167,8 @@ def get_episode_metadata_tvdb(season_metadata, episode, banners=True):
         
     return info
 
-def get_episode_metadata_trakt(season_metadata, episode, banners=True):
-    info = copy.deepcopy(season_metadata)
+def get_episode_metadata_trakt(show_metadata, episode, banners=True):
+    info = copy.deepcopy(show_metadata)
 
     info['episode'] = episode.get('number')
     info['title'] = episode.get('title','')
