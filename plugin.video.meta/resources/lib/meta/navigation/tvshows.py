@@ -378,7 +378,12 @@ def list_trakt_episodes(result, with_time=False):
              (
               _("Show info"),
               'Action(Info)'
-             )
+             ),
+             (
+              _("Add to list"),
+              "RunPlugin({0})".format(plugin.url_for("lists_add_episode_to_list", src='tvdb', id=id,
+                                                     season=season_num, episode=episode_num))
+             ),
         ]
         
         items.append({'label': label,
@@ -422,6 +427,10 @@ def make_tvshow_item(info):
      ),
      (
       _("Show info"), 'Action(Info)'
+     ),
+     (
+      _("Add to list"),
+      "RunPlugin({0})".format(plugin.url_for("lists_add_show_to_list", src='tvdb', id=tvdb_id,))
      )
     ]
              
@@ -444,7 +453,7 @@ def list_seasons_tvdb(id):
     show = tvdb[id]
     show_info = get_tvshow_metadata_tvdb(show, banners=False)
     
-    context_menu = [ ( _("Show info"), 'Action(Info)' ) ]
+
     
     items = []
     for (season_num, season) in show.items():
@@ -452,6 +461,17 @@ def list_seasons_tvdb(id):
             continue
         
         season_info = get_season_metadata_tvdb(show_info, season)
+
+        context_menu = [
+            (
+                _("Show info"), 'Action(Info)'
+            ),
+            (
+                _("Add to list"),
+                "RunPlugin({0})".format(plugin.url_for("lists_add_season_to_list",
+                                                       src='tvdb', id=id, season=season_num))
+            )
+        ]
         
         items.append({'label': u"%s %d" % (_("Season"), season_num),
                       'path': plugin.url_for(tv_season, id=id, season_num=season_num),
@@ -491,7 +511,12 @@ def list_episodes_tvdb(id, season_num):
          (
           _("Show info"),
           'Action(Info)'
-         )
+         ),
+         (
+          _("Add to list"),
+          "RunPlugin({0})".format(plugin.url_for("lists_add_episode_to_list", src='tvdb', id=id,
+                                                 season=season_num, episode = episode_num))
+         ),
         ]
         
         items.append({'label': episode_info.get('title'),

@@ -256,3 +256,9 @@ def get_movie(id):
 @plugin.cached(TTL=CACHE_TTL, cache="trakt")
 def get_recommendations(type):
     return call_trakt("/recommendations/{0}".format(type), params={'extended': 'full,images'})
+
+def add_to_list(username, slug, data):
+    return call_trakt("/users/{0}/lists/{1}/items".format(username, slug), data = data)
+
+def remove_from_list(username, slug, data):
+    return call_trakt("/users/{0}/lists/{1}/items/remove".format(username, slug), data = data)

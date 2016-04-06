@@ -5,6 +5,7 @@ from meta.info import get_tvshow_metadata_trakt, get_season_metadata_trakt, get_
 from meta.navigation.base import get_icon_path
 from meta.navigation.movies import make_movie_item
 from meta.navigation.tvshows import make_tvshow_item, tv_play, tv_season
+from meta.gui import dialogs
 from language import get_string as _
 from trakt import trakt
 
@@ -86,6 +87,10 @@ def _lists_trakt_show_list(list_items):
                 ),
                 (
                     _("Show info"), 'Action(Info)'
+                ),
+                (
+                    _("Remove from list"),
+                    "RunPlugin({0})".format(plugin.url_for("lists_remove_show_from_list", src="tvdb", id=tvdb_id))
                 )
             ]
 
@@ -118,6 +123,11 @@ def _lists_trakt_show_list(list_items):
                 ),
                 (
                     _("Show info"), 'Action(Info)'
+                ),
+                (
+                    _("Remove from list"),
+                    "RunPlugin({0})".format(plugin.url_for("lists_remove_season_from_list", src="tvdb",
+                                                           id=tvdb_id, season=list_item["season"]["number"]))
                 )
             ]
 
@@ -156,6 +166,16 @@ def _lists_trakt_show_list(list_items):
                 (
                     _("Show info"),
                     'Action(Info)'
+                ),
+                (
+                    _("Add to list"),
+                    "RunPlugin({0})".format(plugin.url_for("lists_add_episode_to_list", src='tvdb', id=tvdb_id,
+                                                           season=season_number, episode=episode_number))
+                ),
+                (
+                    _("Remove from list"),
+                    "RunPlugin({0})".format(plugin.url_for("lists_remove_season_from_list", src="tvdb", id=tvdb_id,
+                                                           season=season_number, episode = episode_number))
                 )
             ]
 
@@ -178,7 +198,7 @@ def _lists_trakt_show_list(list_items):
             movie = list_item["movie"]
             movie_info = get_trakt_movie_metadata(movie)
 
-            item = make_movie_item(movie_info)
+            item = make_movie_item(movie_info, True)
 
         if item is not None:
             items.append(item)
@@ -188,3 +208,214 @@ def _lists_trakt_show_list(list_items):
             'path': plugin.url_for(_lists_trakt_show_list, list_items=str(list_items[25:]))
         })
     return items
+
+@plugin.route('/lists/add_movie_to_list/<src>/<id>')
+def lists_add_movie_to_list(src, id):
+    selected = get_list_selection()
+    if selected is not None:
+        user = selected['user']
+        slug = selected['slug']
+        if (src == "tmdb" or src == "trakt"): #trakt seems to want integers unless imdb
+            id = int(id)
+        data = {
+            "movies": [
+                {
+                    "ids": {
+                        src: id
+                    }
+                }
+            ]
+        }
+
+        trakt.add_to_list(user, slug, data)
+
+@plugin.route('/lists/add_show_to_list/<src>/<id>')
+def lists_add_show_to_list(src, id):
+    selected = get_list_selection()
+    if selected is not None:
+        user = selected['user']
+        slug = selected['slug']
+        if src == "tvdb" or src == "trakt":  # trakt seems to want integers
+            id = int(id)
+        data = {
+            "shows": [
+                {
+                    "ids": {
+                        src: id
+                    }
+                }
+            ]
+        }
+
+        trakt.add_to_list(user, slug, data)
+
+@plugin.route('/lists/add_season_to_list/<src>/<id>/<season>')
+def lists_add_season_to_list(src, id, season):
+    selected = get_list_selection()
+    if selected is not None:
+        user = selected['user']
+        slug = selected['slug']
+        if src == "tvdb" or src == "trakt":  # trakt seems to want integers
+            season = int(season)
+            id = int(id)
+        data = {
+            "shows": [
+                {
+                    "seasons": [
+                        {
+                            "number": season,
+                        }
+                    ],
+                    "ids": {
+                        src: id
+                    }
+                }
+            ]
+        }
+
+        trakt.add_to_list(user, slug, data)
+
+@plugin.route('/lists/add_episode_to_list/<src>/<id>/<season>/<episode>')
+def lists_add_episode_to_list(src, id, season, episode):
+    selected = get_list_selection()
+    if selected is not None:
+        user = selected['user']
+        slug = selected['slug']
+        if src == "tvdb" or src == "trakt": #trakt seems to want integers
+            season = int(season)
+            episode = int(episode)
+            id = int(id)
+        data = {
+                "shows": [
+                    {
+                        "seasons": [
+                            {
+                                "number": season,
+                                "episodes": [
+                                    {
+                                        "number": episode
+                                    }
+                                ]
+                            }
+                        ],
+                        "ids": {
+                            src: id
+                        }
+                    }
+                ]
+            }
+
+        trakt.add_to_list(user, slug, data)
+
+@plugin.route('/lists/remove_movie_from_list/<src>/<id>')
+def lists_remove_movie_from_list(src, id):
+    selected = get_list_selection()
+    if selected is not None:
+        user = selected['user']
+        slug = selected['slug']
+        if (src == "tmdb" or src == "trakt"):  # trakt seems to want integers unless imdb
+            id = int(id)
+        data = {
+            "movies": [
+                {
+                    "ids": {
+                        src: id
+                    }
+                }
+            ]
+        }
+
+        trakt.remove_from_list(user, slug, data)
+
+@plugin.route('/lists/remove_show_from_list/<src>/<id>')
+def lists_remove_show_from_list(src, id):
+    selected = get_list_selection()
+    if selected is not None:
+        user = selected['user']
+        slug = selected['slug']
+        if src == "tvdb" or src == "trakt":  # trakt seems to want integers
+            id = int(id)
+        data = {
+            "shows": [
+                {
+                    "ids": {
+                        src: id
+                    }
+                }
+            ]
+        }
+
+        trakt.remove_from_list(user, slug, data)
+
+@plugin.route('/lists/remove_season_from_list/<src>/<id>/<season>')
+def lists_remove_season_from_list(src, id, season):
+    selected = get_list_selection()
+    if selected is not None:
+        user = selected['user']
+        slug = selected['slug']
+        if src == "tvdb" or src == "trakt":  # trakt seems to want integers
+            season = int(season)
+            id = int(id)
+        data = {
+            "shows": [
+                {
+                    "seasons": [
+                        {
+                            "number": season,
+                        }
+                    ],
+                    "ids": {
+                        src: id
+                    }
+                }
+            ]
+        }
+
+        trakt.remove_from_list(user, slug, data)
+
+@plugin.route('/lists/remove_episode_from_list/<src>/<id>/<season>/<episode>')
+def lists_remove_episode_from_list(src, id, season, episode):
+    selected = get_list_selection()
+    if selected is not None:
+        user = selected['user']
+        slug = selected['slug']
+        if src == "tvdb" or src == "trakt":  # trakt seems to want integers
+            season = int(season)
+            episode = int(episode)
+            id = int(id)
+        data = {
+            "shows": [
+                {
+                    "seasons": [
+                        {
+                            "number": season,
+                            "episodes": [
+                                {
+                                    "number": episode
+                                }
+                            ]
+                        }
+                    ],
+                    "ids": {
+                        src: id
+                    }
+                }
+            ]
+        }
+
+        trakt.remove_from_list(user, slug, data)
+
+def get_list_selection():
+    trakt_lists = trakt.trakt_get_lists()
+    my_lists = []
+    for list in trakt_lists:
+        my_lists.append({
+            'name': list["name"],
+            'user': list["user"]["username"],
+            'slug': list["ids"]["slug"]
+        })
+
+    selection = dialogs.select(_("Select list"), [l["name"] for l in my_lists])
+    if selection >= 0:
+        return my_lists[selection]
+    return None

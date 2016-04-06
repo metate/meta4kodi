@@ -252,7 +252,7 @@ def list_trakt_movies(results):
     items = [make_movie_item(movie) for movie in movies]
     return items
     
-def make_movie_item(movie_info):
+def make_movie_item(movie_info, is_list = False):
 
     tmdb_id = movie_info.get('tmdb')
     imdb_id = movie_info.get('imdb')
@@ -274,10 +274,23 @@ def make_movie_item(movie_info):
       "RunPlugin({0})".format(plugin.url_for("movies_add_to_library", src=src, id=id))
      ),
      (
+      _("Add to list"),
+      "RunPlugin({0})".format(plugin.url_for("lists_add_movie_to_list", src=src, id=id))
+     ),
+     (
       _("Show info"),
       'Action(Info)'
      ),
     ]
+
+    if is_list:
+        context_menu.append(
+            (
+                _("Remove from list"),
+                "RunPlugin({0})".format(plugin.url_for("lists_remove_movie_from_list", src=src, id=id))
+            )
+        )
+
     
     return {
         'label': movie_info['title'],
