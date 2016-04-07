@@ -93,6 +93,27 @@ def tv_search():
     """ Activate movie search """
     search(tv_search_term)
 
+@plugin.route('/tv/search_for/<name>/<season>/<episode>')
+def tv_search_for(name, season, episode):
+    """ Activate tv search """
+    import_tvdb()
+
+    search_results = tvdb.search(name, language=LANG)
+
+    items = []
+    load_full_tvshow = lambda tvshow: tvdb.get_show(tvshow['id'], full=True)
+    for tvdb_show in execute(load_full_tvshow, search_results, workers=10):
+        info = build_tvshow_info(tvdb_show)
+        items.append(info)
+
+    if len(items) > 1:
+        selection = dialogs.select("Choose Show",
+                                   [s["title"] + " (" + str(s["year"]) + ")" for s in items])
+    else:
+        selection = 0
+    id = items[selection]["tvdb_id"]
+    tv_play(id, season, episode, "default")
+
 @plugin.route('/tv/search_term/<term>/<page>')
 def tv_search_term(term, page):
     """ Perform search of a specified <term>"""
