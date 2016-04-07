@@ -90,6 +90,24 @@ def movies_search():
     """ Activate movie search """
     search(movies_search_term)
 
+@plugin.route('/movies/search_for/<name>')
+def movies_search_for(name):
+    """ Activate tv search """
+    import_tmdb()
+    from meta.utils.text import parse_year
+
+    items = tmdb.Search().movie(query=name, language=LANG, page=1)["results"]
+
+    if len(items) > 1:
+        selection = dialogs.select("Choose Movie",
+                                   [s["title"] + " (" + parse_year(s["release_date"]) + ")" for s in items])
+    else:
+        selection = 0
+
+    movie = get_movie_metadata(items[selection])
+    id = movie["tmdb"]
+    movies_play("tmdb", id, "default")
+
 @plugin.route('/movies/search_term/<term>/<page>')
 def movies_search_term(term, page):
     """ Perform search of a specified <term>"""
