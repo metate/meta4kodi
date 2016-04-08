@@ -5,7 +5,7 @@ from xbmcswift2 import xbmc, xbmcplugin
 from meta import plugin, import_tmdb, LANG
 from meta.info import get_movie_metadata, get_trakt_movie_metadata
 from meta.gui import dialogs
-from meta.utils.text import parse_year, date_to_timestamp
+from meta.utils.text import parse_year, date_to_timestamp, to_utf8
 from meta.play.movies import play_movie
 from meta.library.movies import setup_library, add_movie_to_library
 from meta.library.tools import scan_library
@@ -85,8 +85,8 @@ def movies_search():
     """ Activate movie search """
     search(movies_search_term)
 
-@plugin.route('/movies/search_for/<name>')
-def movies_search_for(name):
+@plugin.route('/movies/play_by_name/<name>')
+def movies_play_by_name(name, lang = "en"):
     """ Activate tv search """
     import_tmdb()
     from meta.utils.text import parse_year
@@ -94,14 +94,13 @@ def movies_search_for(name):
     items = tmdb.Search().movie(query=name, language=LANG, page=1)["results"]
 
     if len(items) > 1:
-        selection = dialogs.select("Choose Movie",
-                                   [s["title"] + " (" + parse_year(s["release_date"]) + ")" for s in items])
+        selection = dialogs.select(_("Choose Movie"),
+                                   [to_utf8(s["title"]) + " (" + parse_year(s["release_date"]) + ")" for s in items])
     else:
         selection = 0
-
-    movie = get_movie_metadata(items[selection])
-    id = movie["tmdb"]
-    movies_play("tmdb", id, "default")
+    if selection != -1:
+        id = items[selection]["id"]
+        movies_play("tmdb", id, "default")
 
 @plugin.route('/movies/search_term/<term>/<page>')
 def movies_search_term(term, page):
