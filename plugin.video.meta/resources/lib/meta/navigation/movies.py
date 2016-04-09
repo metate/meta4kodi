@@ -89,7 +89,10 @@ def movies_search():
 def movies_play_by_name(name, lang = "en"):
     """ Activate tv search """
     import_tmdb()
+    import urllib
     from meta.utils.text import parse_year
+
+    name = urllib.unquote(name)
 
     items = tmdb.Search().movie(query=name, language=LANG, page=1)["results"]
 

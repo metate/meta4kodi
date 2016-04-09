@@ -98,11 +98,21 @@ def tv_play_by_name(name, season, episode, lang = "en"):
     """ Activate tv search """
     import_tvdb()
 
+    import urllib
+    name = urllib.unquote(name)
+
     search_results = tvdb.search(name, language= lang)
+
+    if search_results == []:
+        dialogs.ok(_("Show not found"), "no show information found for {0} in tvdb".format(name))
+        return
 
     items = []
     for show in search_results:
-        show["year"] = int(show['firstaired'].split("-")[0].strip())
+        if "firstaired" in show:
+            show["year"] = int(show['firstaired'].split("-")[0].strip())
+        else:
+            show["year"] = 0
         items.append(show)
 
     if len(items) > 1:
