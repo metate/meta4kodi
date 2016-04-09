@@ -93,7 +93,7 @@ def tv_search():
     """ Activate movie search """
     search(tv_search_term)
 
-@plugin.route('/tv/play_by_name/<name>/<season>/<episode>')
+@plugin.route('/tv/play_by_name/<name>/<season>/<episode>/<lang>')
 def tv_play_by_name(name, season, episode, lang = "en"):
     """ Activate tv search """
     import_tvdb()
@@ -116,8 +116,8 @@ def tv_play_by_name(name, season, episode, lang = "en"):
         items.append(show)
 
     if len(items) > 1:
-        selection = dialogs.select(_("Choose Show"),
-                                   [to_utf8(s["seriesname"]) + " (" + str(s["year"]) + ")" for s in items])
+        selection = dialogs.select(_("Choose Show"), ["{0} ({1})".format(
+            unicode.encode(unicode(s["seriesname"], "ascii", "ignore")), s["year"]) for s in items])
     else:
         selection = 0
     if selection != -1:

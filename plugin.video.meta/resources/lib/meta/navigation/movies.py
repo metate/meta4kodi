@@ -85,7 +85,7 @@ def movies_search():
     """ Activate movie search """
     search(movies_search_term)
 
-@plugin.route('/movies/play_by_name/<name>')
+@plugin.route('/movies/play_by_name/<name>/<lang>')
 def movies_play_by_name(name, lang = "en"):
     """ Activate tv search """
     import_tmdb()
@@ -94,11 +94,15 @@ def movies_play_by_name(name, lang = "en"):
 
     name = urllib.unquote(name)
 
-    items = tmdb.Search().movie(query=name, language=LANG, page=1)["results"]
+    items = tmdb.Search().movie(query=name, language=lang, page=1)["results"]
+
+    if items == []:
+        dialogs.ok(_("Movie not found"), "no movie information found for {0} in tmdb".format(name))
+        return
 
     if len(items) > 1:
-        selection = dialogs.select(_("Choose Movie"),
-                                   [to_utf8(s["title"]) + " (" + parse_year(s["release_date"]) + ")" for s in items])
+        selection = dialogs.select(_("Choose Movie"), ["{0} ({1})".format(
+            unicode.encode(unicode(s["title"], "ascii", "ignore")), parse_year(s["release_date"])) for s in items])
     else:
         selection = 0
     if selection != -1:
