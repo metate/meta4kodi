@@ -89,20 +89,18 @@ def movies_search():
 def movies_play_by_name(name, lang = "en"):
     """ Activate tv search """
     import_tmdb()
-    import urllib
     from meta.utils.text import parse_year
-
-    name = urllib.unquote(name)
 
     items = tmdb.Search().movie(query=name, language=lang, page=1)["results"]
 
     if items == []:
-        dialogs.ok(_("Movie not found"), "no movie information found for {0} in tmdb".format(name))
+        dialogs.ok(_("Movie not found"), "{0} {1}".format(_("No movie information found on TMDB for"),name))
         return
 
     if len(items) > 1:
         selection = dialogs.select(_("Choose Movie"), ["{0} ({1})".format(
-            unicode.encode(unicode(s["title"], "ascii", "ignore")), parse_year(s["release_date"])) for s in items])
+            to_utf8(s["title"]),
+            parse_year(s["release_date"])) for s in items])
     else:
         selection = 0
     if selection != -1:

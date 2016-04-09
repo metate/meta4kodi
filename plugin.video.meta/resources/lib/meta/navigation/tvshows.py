@@ -98,13 +98,10 @@ def tv_play_by_name(name, season, episode, lang = "en"):
     """ Activate tv search """
     import_tvdb()
 
-    import urllib
-    name = urllib.unquote(name)
-
     search_results = tvdb.search(name, language= lang)
 
     if search_results == []:
-        dialogs.ok(_("Show not found"), "no show information found for {0} in tvdb".format(name))
+        dialogs.ok(_("Show not found"), "{0} {1} in tvdb".format(_("no show information found for"), to_utf8(name)))
         return
 
     items = []
@@ -117,7 +114,7 @@ def tv_play_by_name(name, season, episode, lang = "en"):
 
     if len(items) > 1:
         selection = dialogs.select(_("Choose Show"), ["{0} ({1})".format(
-            unicode.encode(unicode(s["seriesname"], "ascii", "ignore")), s["year"]) for s in items])
+            to_utf8(s["seriesname"]), s["year"]) for s in items])
     else:
         selection = 0
     if selection != -1:
