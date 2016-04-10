@@ -2,7 +2,7 @@ from meta import plugin
 from meta.navigation.movies import make_movie_item
 from meta.info import get_tvshow_metadata_trakt, get_season_metadata_trakt, get_episode_metadata_trakt, \
     get_trakt_movie_metadata
-from meta.navigation.base import get_icon_path
+from meta.navigation.base import get_icon_path, search
 from meta.navigation.movies import make_movie_item
 from meta.navigation.tvshows import make_tvshow_item, tv_play, tv_season
 from meta.gui import dialogs
@@ -15,20 +15,25 @@ def lists():
     items = [
         {
             'label': _("Trakt liked lists"),
-            'path': plugin.url_for("lists_trakt_liked_lists"),
+            'path': plugin.url_for("lists_trakt_liked_lists", page = 1),
             'icon': get_icon_path("traktlikedlists"),
         },
         {
             'label': _("Trakt my lists"),
             'path': plugin.url_for("lists_trakt_my_lists"),
             'icon': get_icon_path("traktmylists"),
-        }
+        },
+        {
+            'label': _("Search"),
+            'path': plugin.url_for("lists_trakt_search_for_lists"),
+            'icon': get_icon_path("search"),
+        },
     ]
     return items
 
-@plugin.route('/lists/trakt/liked_lists')
-def lists_trakt_liked_lists():
-    lists = trakt.trakt_get_liked_lists()
+@plugin.route('/lists/trakt/liked_lists/<page>')
+def lists_trakt_liked_lists(page):
+    lists, pages = trakt.trakt_get_liked_lists(page)
     items = []
     for list in lists:
         info = list["list"]
@@ -40,7 +45,13 @@ def lists_trakt_liked_lists():
             'path': plugin.url_for("lists_trakt_show_list", user = user, slug = slug),
             'icon': get_icon_path("traktlikedlists"),  # TODO
         })
-    return sorted(items,key = lambda item: item["label"])
+    if pages > page:
+        items.append({
+            'label': _("Next >>"),
+            'path': plugin.url_for("lists_trakt_liked_lists", page = int(page) + 1),
+            'icon': get_icon_path("traktlikedlists"),  # TODO
+        })
+    return items
 
 @plugin.route('/lists/trakt/my_lists')
 def lists_trakt_my_lists():
@@ -56,6 +67,52 @@ def lists_trakt_my_lists():
             'icon': get_icon_path("traktmylists"),
         })
     return sorted(items,key = lambda item: item["label"])
+
+@plugin.route('/lists/trakt_search_for_lists')
+def lists_trakt_search_for_lists():
+    search(lists_search_for_lists_term)
+
+@plugin.route('/lists/search_for_lists_term/<term>/<page>')
+def lists_search_for_lists_term(term,page):
+    lists, pages = trakt.search_for_list(term, page)
+    page = int(page)
+    pages = int(pages)
+    items = []
+    for list in lists:
+        if "list" in list:
+            list_info = list["list"]
+        else:
+            continue
+        name = list_info["name"]
+        user = list_info["username"]
+        slug = list_info["ids"]["slug"]
+
+        info = {}
+        info['title'] = name
+        if "description" in list_info:
+            info["plot"] = list_info["description"]
+        else:
+            info["plot"] = _("No description available")
+        if user != None:
+            items.append({
+                'label': "{0} {1} {2}".format(name, _("by"), user),
+                'path': plugin.url_for("lists_trakt_show_list", user=user, slug=slug),
+                'info': info,
+                'icon': get_icon_path("traktlikedlists"),  # TODO
+            })
+
+    if (len(items) < 25 and pages > page):
+        page = page + 1
+        results = lists_search_for_lists_term(term, page)
+        return items + results
+    if pages > page:
+        items.append({
+            'label': _("Next >>"),
+            'path': plugin.url_for("lists_search_for_lists_term", term = term, page=page + 1),
+            'icon': get_icon_path("traktlikedlists"),  # TODO
+        })
+    return items
+
 
 @plugin.route('/lists/trakt/show_list/<user>/<slug>')
 def lists_trakt_show_list(user, slug):
