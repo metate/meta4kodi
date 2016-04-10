@@ -5,7 +5,7 @@ from xbmcswift2 import xbmc, xbmcplugin
 from meta import plugin, import_tmdb, LANG
 from meta.info import get_movie_metadata, get_trakt_movie_metadata
 from meta.gui import dialogs
-from meta.utils.text import parse_year, date_to_timestamp
+from meta.utils.text import parse_year, date_to_timestamp, to_utf8
 from meta.play.movies import play_movie
 from meta.library.movies import setup_library, add_movie_to_library
 from meta.library.tools import scan_library
@@ -38,7 +38,7 @@ def movies():
         {
             'label': _("In theatres"),
             'path': plugin.url_for(movies_now_playing, page='1'),
-            'icon': get_icon_path("movies"),
+            'icon': get_icon_path("intheatres"),
         },
         {
             'label': _("Top rated"),
@@ -53,7 +53,7 @@ def movies():
         {
             'label': _("Trakt collection"),
             'path': plugin.url_for(movies_trakt_collection),
-            'icon': get_icon_path("movies"), # TODO
+            'icon': get_icon_path("traktcollection"),
             'context_menu': [
                 (
                     _("Add to library"),
@@ -64,7 +64,7 @@ def movies():
         {
             'label': _("Trakt watchlist"),
             'path': plugin.url_for(movies_trakt_watchlist),
-            'icon': get_icon_path("movies"), # TODO
+            'icon': get_icon_path("traktwatchlist"),
             'context_menu': [
                 (
                     _("Add to library"),
@@ -75,7 +75,7 @@ def movies():
         {
             'label': _("Trakt recommendations"),
             'path': plugin.url_for(movies_trakt_recommendations),
-            'icon': get_icon_path("movies"),  # TODO
+            'icon': get_icon_path("traktrecommendations"),
         },
     ]
 
@@ -89,6 +89,28 @@ def movies():
 def movies_search():
     """ Activate movie search """
     search(movies_search_term)
+
+@plugin.route('/movies/play_by_name/<name>/<lang>')
+def movies_play_by_name(name, lang = "en"):
+    """ Activate tv search """
+    import_tmdb()
+    from meta.utils.text import parse_year
+
+    items = tmdb.Search().movie(query=name, language=lang, page=1)["results"]
+
+    if items == []:
+        dialogs.ok(_("Movie not found"), "{0} {1}".format(_("No movie information found on TMDB for"),name))
+        return
+
+    if len(items) > 1:
+        selection = dialogs.select(_("Choose Movie"), ["{0} ({1})".format(
+            to_utf8(s["title"]),
+            parse_year(s["release_date"])) for s in items])
+    else:
+        selection = 0
+    if selection != -1:
+        id = items[selection]["id"]
+        movies_play("tmdb", id, "default")
 
 @plugin.route('/movies/search_term/<term>/<page>')
 def movies_search_term(term, page):

@@ -7,7 +7,7 @@ from meta import plugin, import_tmdb, import_tvdb, LANG
 from meta.gui import dialogs
 from meta.info import get_tvshow_metadata_tvdb, get_season_metadata_tvdb, get_episode_metadata_tvdb, \
     get_tvshow_metadata_trakt, get_season_metadata_trakt, get_episode_metadata_trakt
-from meta.utils.text import parse_year, is_ascii
+from meta.utils.text import parse_year, is_ascii, to_utf8
 from meta.utils.executor import execute
 from meta.utils.properties import set_property
 from meta.library.tvshows import setup_library, add_tvshow_to_library
@@ -43,7 +43,7 @@ def tv():
         {
             'label': _("On the air"),
             'path': plugin.url_for(tv_now_playing, page='1'),
-            'icon': get_icon_path("tv"),
+            'icon': get_icon_path("ontheair"),
         },
         {
             'label': _("Top rated"),
@@ -53,7 +53,7 @@ def tv():
         {
             'label': _("Trakt collection"),
             'path': plugin.url_for(tv_trakt_collection),
-            'icon': get_icon_path("tv"), # TODO
+            'icon': get_icon_path("traktcollection"),
             'context_menu': [
                 (
                     _("Add to library"),
@@ -64,7 +64,7 @@ def tv():
         {
             'label': _("Trakt watchlist"),
             'path': plugin.url_for(tv_trakt_watchlist),
-            'icon': get_icon_path("tv"), # TODO
+            'icon': get_icon_path("traktwatchlist"),
             'context_menu': [
                 (
                     _("Add to library"),
@@ -75,17 +75,17 @@ def tv():
         {
             'label': _("Next episodes"),
             'path': plugin.url_for(tv_trakt_next_episodes),
-            'icon': get_icon_path("tv"), # TODO
+            'icon': get_icon_path("traktnextepisodes"),
         },
         {
             'label': _("My calendar"),
             'path': plugin.url_for(tv_trakt_calendar),
-            'icon': get_icon_path("tv"), # TODO
+            'icon': get_icon_path("traktcalendar"),
         },
         {
             'label': _("Trakt recommendations"),
             'path': plugin.url_for(tv_trakt_recommendations),
-            'icon': get_icon_path("tv"),  # TODO
+            'icon': get_icon_path("traktrecommendations"),
         },
     ]
     
@@ -99,6 +99,34 @@ def tv():
 def tv_search():
     """ Activate movie search """
     search(tv_search_term)
+
+@plugin.route('/tv/play_by_name/<name>/<season>/<episode>/<lang>')
+def tv_play_by_name(name, season, episode, lang = "en"):
+    """ Activate tv search """
+    import_tvdb()
+
+    search_results = tvdb.search(name, language= lang)
+
+    if search_results == []:
+        dialogs.ok(_("Show not found"), "{0} {1} in tvdb".format(_("no show information found for"), to_utf8(name)))
+        return
+
+    items = []
+    for show in search_results:
+        if "firstaired" in show:
+            show["year"] = int(show['firstaired'].split("-")[0].strip())
+        else:
+            show["year"] = 0
+        items.append(show)
+
+    if len(items) > 1:
+        selection = dialogs.select(_("Choose Show"), ["{0} ({1})".format(
+            to_utf8(s["seriesname"]), s["year"]) for s in items])
+    else:
+        selection = 0
+    if selection != -1:
+        id = items[selection]["id"]
+        tv_play(id, season, episode, "default")
 
 @plugin.route('/tv/search_term/<term>/<page>')
 def tv_search_term(term, page):

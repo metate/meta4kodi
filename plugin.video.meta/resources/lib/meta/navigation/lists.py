@@ -16,12 +16,12 @@ def lists():
         {
             'label': _("Trakt liked lists"),
             'path': plugin.url_for("lists_trakt_liked_lists"),
-            'icon': get_icon_path("tv"),  # TODO
+            'icon': get_icon_path("traktlikedlists"),
         },
         {
             'label': _("Trakt my lists"),
             'path': plugin.url_for("lists_trakt_my_lists"),
-            'icon': get_icon_path("tv"),  # TODO
+            'icon': get_icon_path("traktmylists"),
         }
     ]
     return items
@@ -38,7 +38,7 @@ def lists_trakt_liked_lists():
         items.append({
             'label': name,
             'path': plugin.url_for("lists_trakt_show_list", user = user, slug = slug),
-            'icon': get_icon_path("tv"),  # TODO
+            'icon': get_icon_path("traktlikedlists"),  # TODO
         })
     return sorted(items,key = lambda item: item["label"])
 
@@ -53,7 +53,7 @@ def lists_trakt_my_lists():
         items.append({
             'label': name,
             'path': plugin.url_for(lists_trakt_show_list, user = user, slug = slug),
-            'icon': get_icon_path("tv"),  # TODO
+            'icon': get_icon_path("traktmylists"),
         })
     return sorted(items,key = lambda item: item["label"])
 
