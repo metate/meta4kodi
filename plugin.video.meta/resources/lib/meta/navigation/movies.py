@@ -87,7 +87,7 @@ def movies_search():
 
 @plugin.route('/movies/play_by_name/<name>/<lang>')
 def movies_play_by_name(name, lang = "en"):
-    """ Activate tv search """
+    """ Activate movie search """
     import_tmdb()
     from meta.utils.text import parse_year
 
