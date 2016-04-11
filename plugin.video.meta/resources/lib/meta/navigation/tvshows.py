@@ -100,10 +100,10 @@ def tv_search():
     """ Activate movie search """
     search(tv_search_term)
 
-@plugin.route('/tv/play_by_name/<name>/<season>/<episode>/<lang>')
+@plugin.route('/tv/play_by_name/<name>/<season>/<episode>/<lang>', options = {"season": "None", "episode": "None",
+                                                                              "lang": "en"})
 @plugin.route('/tv/play_by_name/<name>/<lang>', name="tv_play_by_name_without_episodes")
-@plugin.route('/tv/play_by_name/<name>', name="tv_play_by_name_only_name")
-def tv_play_by_name(name, season=None, episode=None, lang = "en"):
+def tv_play_by_name(name, season = None, episode = None, lang = "en"):
     """ Activate tv search """
     import_tvdb()
 

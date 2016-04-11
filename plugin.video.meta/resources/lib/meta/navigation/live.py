@@ -122,9 +122,8 @@ def live_search_term(term):
     return live_play(term)
 
 
-@plugin.route('/live/<channel>')
-@plugin.route('/live/<channel>/<program>', name="live_with_program")
-@plugin.route('/live/<channel>/<program>/<language>', name="live_with_program_and_language")
-def live_play(channel, program=None, language = "en"):
+
+@plugin.route('/live/<channel>/<program>/<language>', options = {"program": "None", "language": "en"})
+def live_play(channel, program, language):
     """ Activate movie search """
     play_channel(channel, program, language)
