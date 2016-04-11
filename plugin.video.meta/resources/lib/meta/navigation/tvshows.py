@@ -126,6 +126,25 @@ def tv_play_by_name(name, season, episode, lang = "en"):
         selection = 0
     if selection != -1:
         id = items[selection]["id"]
+        if season == "None" or episode == "None":
+            season = None
+            episode = None
+        while season is None or episode is None:
+            selection = dialogs.select(_("Choose season"), [item["label"] for item in tv_tvshow(id)])
+            if selection != -1:
+                season = selection + 1
+            else:
+                return
+            items = []
+            for item in tv_season(id, season):
+                label = "S{0}E{1} - {2}".format(item["info"]["season"], item["info"]["episode"],
+                                                to_utf8(item["info"]["title"]))
+                if item["info"]["plot"] is not None:
+                    label += " - {0}".format(to_utf8(item["info"]["plot"]))
+                items.append(label)
+            selection = dialogs.select(_("Choose episode"), items)
+            if selection != -1:
+                episode = selection + 1
         tv_play(id, season, episode, "default")
 
 @plugin.route('/tv/search_term/<term>/<page>')
