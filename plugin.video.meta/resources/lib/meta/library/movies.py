@@ -72,8 +72,16 @@ def update_library():
 def add_movie_to_library(library_folder, src, id, date):    
     changed = False
     
+    # create movie folder
+    movie_folder = os.path.join(library_folder, str(id)+'/')
+    if not xbmcvfs.exists(movie_folder):
+        try: 
+            xbmcvfs.mkdir(movie_folder)
+        except:
+            pass
+    
     # create nfo file
-    nfo_filepath = os.path.join(library_folder, str(id)+".nfo")
+    nfo_filepath = os.path.join(movie_folder, str(id)+".nfo")
     if not xbmcvfs.exists(nfo_filepath):
         changed = True
         nfo_file = xbmcvfs.File(nfo_filepath, 'w')
@@ -87,7 +95,7 @@ def add_movie_to_library(library_folder, src, id, date):
             os.utime(nfo_filepath, (date,date))
         
     # create strm file
-    strm_filepath = os.path.join(library_folder, str(id)+".strm")
+    strm_filepath = os.path.join(movie_folder, str(id)+".strm")
     if not xbmcvfs.exists(strm_filepath):
         changed = True
         strm_file = xbmcvfs.File(strm_filepath, 'w')
@@ -110,11 +118,12 @@ def setup_library(library_folder):
         # auto configure folder
         msg = _("Would you like to automatically set Meta as a movies video source?")
         if dialogs.yesno(_("Library setup"), msg):
+            source_thumbnail = "special://home/addons/plugin.video.meta/resources/img/movies.png"
             source_name = "Meta Movies"
             
-            source_content = "('{0}','movies','metadata.themoviedb.org','',2147483647,0,'<settings><setting id=\"RatingS\" value=\"TMDb\" /><setting id=\"certprefix\" value=\"Rated \" /><setting id=\"fanart\" value=\"true\" /><setting id=\"keeporiginaltitle\" value=\"false\" /><setting id=\"language\" value=\"{1}\" /><setting id=\"tmdbcertcountry\" value=\"us\" /><setting id=\"trailer\" value=\"true\" /></settings>',0,0,NULL,NULL)".format(library_folder, LANG)
+            source_content = "('{0}','movies','metadata.themoviedb.org','',2147483647,1,'<settings><setting id=\"RatingS\" value=\"TMDb\" /><setting id=\"certprefix\" value=\"Rated \" /><setting id=\"fanart\" value=\"true\" /><setting id=\"keeporiginaltitle\" value=\"false\" /><setting id=\"language\" value=\"{1}\" /><setting id=\"tmdbcertcountry\" value=\"us\" /><setting id=\"trailer\" value=\"true\" /></settings>',0,0,NULL,NULL)".format(library_folder, LANG)
 
-            add_source(source_name, library_folder, source_content)
+            add_source(source_name, library_folder, source_content, source_thumbnail)
 
     # return translated path
     return xbmc.translatePath(library_folder)
