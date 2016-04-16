@@ -19,6 +19,7 @@ from meta.navigation.base import search, get_icon_path, get_genre_icon, get_genr
     caller_name, caller_args
 from language import get_string as _
 from settings import CACHE_TTL, SETTING_TV_LIBRARY_FOLDER
+from constants import NETWORKS
 
 
 @plugin.route('/tv')
@@ -34,6 +35,11 @@ def tv():
             'label': _("Genres"),
             'path': plugin.url_for(tv_genres),
             'icon': get_icon_path("genres"),
+        },
+        {
+            'label': _("Network"),
+            'path': plugin.url_for(tv_network),
+            'icon': get_icon_path("tv"),  # todo
         },
         {
             'label': _("Popular"),
@@ -180,6 +186,56 @@ def tv_search_term(term, page):
         items.append(make_tvshow_item(info))
     
     return items
+
+@plugin.route('/tv/network')
+def tv_network():
+    import string
+    items = [
+        {
+            'label': 'All',
+            'path': plugin.url_for(tv_network_letter, letter='All')
+        },
+        {
+            'label': '#',
+            'path': plugin.url_for(tv_network_letter, letter = '#')
+        }
+    ]
+    for letter in string.uppercase:
+        item = {
+            'label': letter,
+            'path': plugin.url_for(tv_network_letter, letter = letter),
+            'icon': get_icon_path("tv"), #todo
+        }
+        items.append(item)
+
+    return items
+
+@plugin.route('/tv/network/<letter>')
+def tv_network_letter(letter):
+    items = []
+    if letter == '#':
+        comparefunc = lambda name: name[0].isdigit()
+    elif letter == 'All':
+        comparefunc = lambda name: True
+    else:
+        comparefunc = lambda name: name.lower().startswith(letter.lower())
+    for network in NETWORKS:
+        if comparefunc(network["name"]):
+            item = {
+                'label': to_utf8(network["name"]),
+                'path': plugin.url_for(tv_network_id, network_id=network["id"]),
+                'icon': get_icon_path("tv"), #todo
+            }
+            items.append(item)
+
+    return sorted(items,key = lambda item: item["label"].lower())
+
+@plugin.route('/tv/network/<network_id>/<page>', options={'page': '1'})
+def tv_network_id(network_id, page = 1):
+    import_tmdb()
+
+    search_results = tmdb.Discover().tv(with_networks = network_id, page = page, sort_by = "popularity.desc")
+    return list_tvshows(search_results)
 
 @plugin.cached_route('/tv/most_popular/<page>', TTL=CACHE_TTL)
 def tv_most_popular(page):
