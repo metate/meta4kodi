@@ -48,6 +48,28 @@
             <!-- Default players -->
             <setting label="30510" option="close" type="action" action="RunPlugin(plugin://plugin.video.meta/settings/default_player/live)"/>
             <setting subsetting="true" visible="!eq(0,)" enable="false" type="text" id="live_default_player" default="selector" />
+
+        <!-- MUSIC -->
+        <setting label="30700" type="lsep"/>
+
+            <!-- Players -->
+            <setting label="30701" option="close" type="action" action="RunPlugin(plugin://plugin.video.meta/settings/players/music)"/>
+            <setting subsetting="true" visible="false" enable="false" type="text" id="music_enabled_players" />
+
+            <!-- Default players -->
+            <setting label="30710" option="close" type="action" action="RunPlugin(plugin://plugin.video.meta/settings/default_player/music)"/>
+            <setting subsetting="true" visible="!eq(0,)" enable="false" type="text" id="music_default_player" default="selector" />
+
+        <!-- MUSIC VIDEO -->
+        <setting label="30800" type="lsep"/>
+
+            <!-- Players -->
+            <setting label="30801" option="close" type="action" action="RunPlugin(plugin://plugin.video.meta/settings/players/music_video)"/>
+            <setting subsetting="true" visible="false" enable="false" type="text" id="music_video_enabled_players" />
+
+            <!-- Default players -->
+            <setting label="30810" option="close" type="action" action="RunPlugin(plugin://plugin.video.meta/settings/default_player/music_video)"/>
+            <setting subsetting="true" visible="!eq(0,)" enable="false" type="text" id="music_video_default_player" default="selector" />
         
     </category>
     
@@ -71,7 +93,7 @@
         <!-- TV Shows -->
         <setting label="30200" type="lsep"/>        
             <!-- library folder -->
-            <setting id="tv_library_folder" label="30302" type="folder" default="special://profile/addon_data/plugin.video.meta/TVShows/" />
+            <setting id="tv_library_folder" label="30302" type="folder" default="special://profile/addon_data/plugin.video.meta/Music/" />
             
     </category>
     

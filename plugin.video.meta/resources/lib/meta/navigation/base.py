@@ -24,7 +24,7 @@ def search(search_func, term = None):
     if plugin.id == xbmc.getInfoLabel('Container.PluginName'):
         # Skip if search item isn't currently selected    
         label = xbmc.getInfoLabel('ListItem.label')
-        if label and not equals(label, _("Search")):
+        if label and not str.startswith(label, _("Search")):
             return
     else:
         external = True
