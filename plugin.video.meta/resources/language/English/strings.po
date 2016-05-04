@@ -293,6 +293,10 @@ msgctxt "#30701"
 msgid "Enable Music Players"
 msgstr ""
 
+msgctxt "#30702"
+msgid "Library folder"
+msgstr ""
+
 msgctxt "#30710"
 msgid "Prefered Music Player"
 msgstr ""

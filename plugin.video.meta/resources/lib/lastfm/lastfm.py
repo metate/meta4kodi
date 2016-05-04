@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
 import requests
 from meta.utils.text import to_utf8
-from meta.gui import dialogs
 from meta import plugin, LANG
 from settings import *
-from language import get_string as _
 
 API_ENDPOINT = "http://ws.audioscrobbler.com/2.0/"
 API_KEY = "190ca7b33906fd52342ee2d9c4d88ea8"
 SHARED_SECRET = "2c633c8d408032e1883789af6ad3a49d"
 
 
-def call_last_fm(params={}, data=None, result_format = "json"):
+def call_last_fm(params={}, data=None, result_format="json"):
     params = dict([(k, to_utf8(v)) for k, v in params.items() if v])
     params["api_key"] = API_KEY
     params["format"] = result_format
@@ -31,7 +29,9 @@ def call_last_fm(params={}, data=None, result_format = "json"):
     else:
         return response.text
 
-def search_artist(artist_name, page = 1):
+
+@plugin.cached(TTL=CACHE_TTL, cache="lastfm")
+def search_artist(artist_name, page=1):
     parameters = {}
     parameters['method'] = 'artist.search'
     parameters['artist'] = artist_name
@@ -41,7 +41,9 @@ def search_artist(artist_name, page = 1):
     results = call_last_fm(parameters)["results"]
     return results
 
-def search_album(album_name, page = 1):
+
+@plugin.cached(TTL=CACHE_TTL, cache="lastfm")
+def search_album(album_name, page=1):
     parameters = {}
     parameters['method'] = 'album.search'
     parameters['album'] = album_name
@@ -51,7 +53,9 @@ def search_album(album_name, page = 1):
     results = call_last_fm(parameters)["results"]
     return results
 
-def search_track(track_name, page = 1):
+
+@plugin.cached(TTL=CACHE_TTL, cache="lastfm")
+def search_track(track_name, page=1):
     parameters = {}
     parameters['method'] = 'track.search'
     parameters['track'] = track_name
@@ -71,14 +75,16 @@ def get_artist_top_tracks(artist_name, page):
     results = call_last_fm(parameters)
     return results["toptracks"]
 
+
 @plugin.cached(TTL=CACHE_TTL, cache="lastfm")
-def get_artist_top_albums(artist_name, page):
+def get_artist_top_albums(artist_name, page=1):
     parameters = {}
     parameters['method'] = 'artist.gettopalbums'
     parameters["artist"] = artist_name
     parameters["page"] = page
     results = call_last_fm(parameters)
     return results["topalbums"]
+
 
 @plugin.cached(TTL=CACHE_TTL, cache="lastfm")
 def get_track_info(artist_name, track_name):
@@ -89,6 +95,7 @@ def get_track_info(artist_name, track_name):
     results = call_last_fm(parameters)
     return results["track"]
 
+
 @plugin.cached(TTL=CACHE_TTL, cache="lastfm")
 def get_album_info(artist_name, album_name):
     parameters = {}
@@ -97,3 +104,12 @@ def get_album_info(artist_name, album_name):
     parameters["album"] = album_name
     results = call_last_fm(parameters)
     return results["album"]
+
+
+@plugin.cached(TTL=CACHE_TTL, cache="lastfm")
+def get_artist_info(artist_name):
+    parameters = {}
+    parameters['method'] = 'artist.getinfo'
+    parameters["artist"] = artist_name
+    results = call_last_fm(parameters)
+    return results["artist"]

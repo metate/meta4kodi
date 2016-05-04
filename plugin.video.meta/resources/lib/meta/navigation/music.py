@@ -1,3 +1,4 @@
+import xbmcgui
 from meta import plugin, LANG
 from meta.gui import dialogs
 from meta.utils.text import to_utf8
@@ -59,8 +60,14 @@ def music_search_artist_term(term, page):
     total_results = search_results["opensearch:totalResults"]
     items = []
     for artist in artists:
-        large_image = artist["image"][2]["#text"]
+        large_image = artist["image"][-1]["#text"]
         name = to_utf8(artist["name"])
+        context_menu = [
+            (
+                _("Add to library"),
+                "RunPlugin({0})".format(plugin.url_for("music_add_artist_to_library", artist_name=name))
+            )
+        ]
         item = {
             'label': name,
             'path': plugin.url_for(music_artist, name=name),
@@ -71,6 +78,7 @@ def music_search_artist_term(term, page):
                 'artist': name,
             },
             'info_type': 'music',
+            'context_menu': context_menu
         }
 
         items.append(item)
@@ -92,9 +100,16 @@ def music_search_album_term(term, page):
     total_results = search_results["opensearch:totalResults"]
     items = []
     for album in albums:
-        large_image = album["image"][2]["#text"]
+        large_image = album["image"][-1]["#text"]
         album_name = to_utf8(album["name"])
         artist_name = to_utf8(album["artist"])
+        context_menu = [
+            (
+                _("Add to library"),
+                "RunPlugin({0})".format(plugin.url_for("music_add_album_to_library", artist_name=artist_name,
+                                                       album_name=album_name))
+            )
+        ]
         item = {
             'label': "{0} - {1}".format(artist_name, album_name),
             'path': plugin.url_for(music_artist_album_tracks, artist_name=artist_name, album_name=album_name),
@@ -105,6 +120,7 @@ def music_search_album_term(term, page):
                 'artist': artist_name,
             },
             'info_type': 'music',
+            'context_menu': context_menu
         }
 
         items.append(item)
@@ -126,9 +142,21 @@ def music_search_track_term(term, page):
     total_results = search_results["opensearch:totalResults"]
     items = []
     for track in tracks:
-        large_image = track["image"][2]["#text"]
+        large_image = track["image"][-1]["#text"]
         track_name = to_utf8(track["name"])
         artist_name = to_utf8(track["artist"])
+        context_menu = [
+            (
+                _("Select stream..."),
+                "PlayMedia({0})".format(plugin.url_for("music_play", artist_name=artist_name,
+                                                       track_name=track_name, mode='select'))
+            ),
+            (
+                _("Add to library"),
+                "RunPlugin({0})".format(plugin.url_for("music_add_to_library", artist_name=artist_name,
+                                                       track_name=track["name"]))
+            )
+        ]
         item = {
             'label': "{0} - {1}".format(artist_name, track_name),
             'path': plugin.url_for(music_play, artist_name=artist_name, track_name=track_name),
@@ -139,6 +167,7 @@ def music_search_track_term(term, page):
                 'artist': artist_name,
             },
             'info_type': 'music',
+            'context_menu': context_menu
         }
 
         items.append(item)
@@ -175,7 +204,7 @@ def music_artist_tracks(artist_name, page):
     results = lastfm.get_artist_top_tracks(artist_name, page)
     items = []
     for track in results["track"]:
-        large_image = track["image"][2]["#text"]
+        large_image = track["image"][-1]["#text"]
         track_name = to_utf8(track["name"])
         context_menu = [
             (
@@ -183,12 +212,11 @@ def music_artist_tracks(artist_name, page):
                 "PlayMedia({0})".format(plugin.url_for("music_play", artist_name=artist_name,
                                                        track_name=track_name, mode='select'))
             ),
-            # not working
-            # (
-            #     _("Add to library"),
-            #     "RunPlugin({0})".format(plugin.url_for("music_add_to_library", artist_name = artist_name,
-            #                                            track_name = track["name"]))
-            # )
+            (
+                _("Add to library"),
+                "RunPlugin({0})".format(plugin.url_for("music_add_to_library", artist_name=artist_name,
+                                                       track_name=track["name"]))
+            )
         ]
         item = {
             'label': track_name,
@@ -218,6 +246,13 @@ def music_artist_albums(artist_name, page):
         album_name = to_utf8(album["name"])
         image = album['image'][-1]['#text']
         artist_album_name = to_utf8(album['artist']['name'])
+        context_menu = [
+            (
+                _("Add to library"),
+                "RunPlugin({0})".format(plugin.url_for("music_add_album_to_library", artist_name=artist_album_name,
+                                                       album_name=album_name))
+            )
+        ]
         item = {
             'thumbnail': image,
             'label': "{0} - {1}".format(artist_album_name, album_name),
@@ -227,6 +262,7 @@ def music_artist_albums(artist_name, page):
             },
             'info_type': 'music',
             'path': plugin.url_for("music_artist_album_tracks", artist_name=artist_name, album_name=album_name),
+            'context_menu': context_menu
         }
         items.append(item)
     if results["@attr"]["totalPages"] > page:
@@ -255,6 +291,11 @@ def music_artist_album_tracks(artist_name, album_name):
                 "PlayMedia({0})".format(plugin.url_for("music_play", artist_name=artist_name,
                                                        track_name=track_name, mode='select'))
             ),
+            (
+                _("Add to library"),
+                "RunPlugin({0})".format(plugin.url_for("music_add_to_library", artist_name=artist_name,
+                                                       track_name=track["name"], album_name=album_name))
+            )
         ]
         item = {
             'label': "{0}. {1}".format(track_number, track_name),
@@ -285,7 +326,14 @@ def music_play(artist_name, track_name, album_name, mode):
                                    album_name=album_name, mode=mode)
         }
     ]
-    return items
+    if mode == 'library':
+        selected = dialogs.select(_("Play As ..."), [item["label"] for item in items])
+        if selected == 0:
+            music_play_audio(artist_name, track_name, album_name, mode)
+        elif selected == 1:
+            music_play_video(artist_name, track_name, album_name, mode)
+    else:
+        return items
 
 
 @plugin.route('/music/play_audio/<artist_name>/<track_name>/<album_name>/<mode>', options={'album_name': "None",
@@ -316,4 +364,40 @@ def music_add_to_library(artist_name, track_name, album_name):
     library_folder = setup_library(plugin.get_setting(SETTING_MUSIC_LIBRARY_FOLDER))
 
     add_music_to_library(library_folder, artist_name, album_name, track_name)
+    scan_library()
+
+
+@plugin.route('/music/add_album_to_library/<artist_name>/<album_name>')
+def music_add_album_to_library(artist_name, album_name):
+    library_folder = setup_library(plugin.get_setting(SETTING_MUSIC_LIBRARY_FOLDER))
+    results = lastfm.get_album_info(artist_name, album_name)
+    for track in results["tracks"]["track"]:
+        track_name = to_utf8(track["name"])
+        add_music_to_library(library_folder, artist_name, album_name, track_name)
+    scan_library()
+
+
+@plugin.route('/music/add_artist_to_library/<artist_name>')
+def music_add_artist_to_library(artist_name):
+    import math
+    library_folder = setup_library(plugin.get_setting(SETTING_MUSIC_LIBRARY_FOLDER))
+    album_results = lastfm.get_artist_top_albums(artist_name)
+    total_albums = len(album_results)
+    index = 0
+    pDialog = xbmcgui.DialogProgress()
+    pDialog.create(_('Meta'), _("{0} {1} {2}").format(_("Adding"), artist_name, _("to library")))
+    for album in album_results["album"]:
+        album_name = to_utf8(album["name"])
+        percent_done = int(math.floor((float(index) / total_albums) * 100))
+        pDialog.update(percent_done, _("{0} {1} - {2} {3}").format(_("Adding"), artist_name,
+                                                                   album_name, _("to library")))
+        track_results = lastfm.get_album_info(artist_name, album_name)
+        for track in track_results["tracks"]["track"]:
+            if pDialog.iscanceled():
+                pDialog.update(0)
+                return
+            track_name = to_utf8(track["name"])
+            add_music_to_library(library_folder, artist_name, album_name, track_name)
+        index += 1
+        pDialog.update(0)
     scan_library()

@@ -33,7 +33,7 @@ def play_music(artist_name, track_name, album_name, mode = "default"):
             'label': "{0} - {1} - {2}".format(artist_name, album_name, track_name),
             'path': link,
             'is_playable': True,
-            'info_type': 'music',
+            'info_type': 'video',
         })
 
 def play_music_video(artist_name, track_name, album_name, mode = "default"):

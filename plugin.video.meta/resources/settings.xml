@@ -85,15 +85,18 @@
         <setting label="30100" type="lsep"/>
             <!-- Automatic library from server -->
             <setting visible="false" label="30400" type="text" id="movies_server_url" default=""/>
-            
-            
             <!-- library folder -->
             <setting id="movies_library_folder" label="30301" type="folder" default="special://profile/addon_data/plugin.video.meta/Movies/" />
 
         <!-- TV Shows -->
         <setting label="30200" type="lsep"/>        
             <!-- library folder -->
-            <setting id="tv_library_folder" label="30302" type="folder" default="special://profile/addon_data/plugin.video.meta/Music/" />
+            <setting id="tv_library_folder" label="30302" type="folder" default="special://profile/addon_data/plugin.video.meta/TVShows/" />
+
+        <!-- MUSIC -->
+        <setting label="30700" type="lsep"/>
+            <!-- library folder -->
+            <setting id="music_library_folder" label="30702" type="folder" default="special://profile/addon_data/plugin.video.meta/Music/" />
             
     </category>
     
