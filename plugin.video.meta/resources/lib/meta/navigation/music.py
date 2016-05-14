@@ -363,8 +363,9 @@ def music_add_to_library(artist_name, track_name, album_name):
 
     library_folder = setup_library(plugin.get_setting(SETTING_MUSIC_LIBRARY_FOLDER))
 
-    add_music_to_library(library_folder, artist_name, album_name, track_name)
-    scan_library()
+    if add_music_to_library(library_folder, artist_name, album_name, track_name):
+        scan_library()
+
 
 
 @plugin.route('/music/add_album_to_library/<artist_name>/<album_name>')
