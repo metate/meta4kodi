@@ -14,9 +14,10 @@ from meta import plugin
 from meta.video_player import VideoPlayer
 from meta.utils.properties import get_property, clear_property
 from lastfm import lastfm
-from meta.gui import dialogs
 from addon import update_library
 from settings import UPDATE_LIBRARY_INTERVAL, SETTING_MUSIC_LIBRARY_FOLDER
+
+from meta.gui import dialogs
 
 player = VideoPlayer()
 
@@ -47,7 +48,14 @@ class Monitor(xbmc.Monitor):
         if row:
             return row[0]
         else:
-            c.execute("INSERT INTO album (strAlbum,strArtists,strReleaseType) VALUES (?,?,?)", (album, artist, "album"))
+            album_info = lastfm.get_album_info(artist, album)
+            if "wiki" in album_info:
+                review = album_info["wiki"]["content"]
+            else:
+                review = ""
+            c.execute("INSERT INTO album (strAlbum,strArtists,strReleaseType, strReview) VALUES (?,?,?,?)",
+                      (album, artist, "album", review))
+
             id = c.lastrowid
             conn.commit()
             return id
@@ -58,7 +66,14 @@ class Monitor(xbmc.Monitor):
         if row:
             return row[0]
         else:
-            c.execute("INSERT INTO artist (strArtist) VALUES (?)", (artist,))
+            artist_info = lastfm.get_artist_info(artist)
+            if "bio" in artist_info:
+                biography = artist_info["bio"]["content"]
+            else:
+                biography = ""
+            image = "<thumb preview={0}</thumb>".format(artist_info["image"][-1]["#text"])
+            c.execute("INSERT INTO artist (strArtist,strBiography, strImage) VALUES (?,?,?)",
+                      (artist, biography, image))
             id = c.lastrowid
             conn.commit()
             return id
@@ -90,6 +105,28 @@ class Monitor(xbmc.Monitor):
             c.execute("INSERT INTO song_artist (idArtist, idSong, strArtist) VALUES (?,?,?)",
                       (artistId, songId, artist))
 
+
+    def add_albumArt(self, albumId, dirName):
+        c.execute("SELECT * FROM art WHERE media_id = ? AND media_type = ?", (albumId, "album"))
+        row = c.fetchone()
+        if not row:
+            absDirName = os.path.abspath(dirName) + os.sep
+            absDirName = absDirName.replace('kodi', 'Kodi')
+            thumb = absDirName + "folder.jpg"
+            c.execute("INSERT INTO art (media_id, media_type,type, url) VALUES (?,?,?,?)",
+                      (albumId, "album", "thumb", thumb))
+
+    def add_artistArt(self, artistId, dirName):
+        c.execute("SELECT * FROM art WHERE media_id = ? AND media_type = ?", (artistId, "artist"))
+        row = c.fetchone()
+        if not row:
+            absDirName = os.path.abspath(dirName) + os.sep
+            absDirName = absDirName.replace('kodi', 'Kodi')
+            thumb = absDirName + ".." + os.sep + "folder.jpg"
+            c.execute("INSERT INTO art (media_id, media_type,type, url) VALUES (?,?,?,?)",
+                      (artistId, "artist", "thumb", thumb))
+
+
     def add_folder_to_music_database(self, music_folder):
         self.setup_database_connection()
         music_folder = xbmc.translatePath(music_folder)  # translate from special:// to absolute
@@ -104,12 +141,16 @@ class Monitor(xbmc.Monitor):
                     album = dirnameparts[-1]
                     song = fname.replace('.strm', '')
                     song_regex = re.compile("(\d+)* (.*)")
-                    song_number = re.sub(song_regex, r"\1", song)
-                    song = re.sub(song_regex, r"\2", song)
-
+                    if re.match(song_regex, song):
+                        song_number = re.sub(song_regex, r"\1", song)
+                        song = re.sub(song_regex, r"\2", song)
+                    else:
+                        song_number = "0"
                     artistId = self.get_artistId(artist)
+                    self.add_artistArt(artistId, dirName)
                     albumId = self.get_albumId(album, artist)
                     self.add_albumArtist(albumId, artistId, artist)
+                    self.add_albumArt(albumId, dirName)
                     songId = self.get_songId(albumId, pathId, artist, song, song_number, fname)
                     self.add_songArtist(songId, artistId, artist)
                     conn.commit()
