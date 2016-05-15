@@ -364,7 +364,7 @@ def music_add_to_library(artist_name, track_name, album_name):
     library_folder = setup_library(plugin.get_setting(SETTING_MUSIC_LIBRARY_FOLDER))
 
     if add_music_to_library(library_folder, artist_name, album_name, track_name):
-        scan_library()
+        scan_library("music")
 
 
 
@@ -375,7 +375,7 @@ def music_add_album_to_library(artist_name, album_name):
     for track in results["tracks"]["track"]:
         track_name = to_utf8(track["name"])
         add_music_to_library(library_folder, artist_name, album_name, track_name)
-    scan_library()
+    scan_library("music")
 
 
 @plugin.route('/music/add_artist_to_library/<artist_name>')
@@ -401,4 +401,4 @@ def music_add_artist_to_library(artist_name):
             add_music_to_library(library_folder, artist_name, album_name, track_name)
         index += 1
         pDialog.update(0)
-    scan_library()
+    scan_library("music")

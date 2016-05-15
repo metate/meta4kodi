@@ -10,12 +10,12 @@ except:
 from xbmcswift2 import xbmc
 from meta.utils.rpc import RPC
 
-def scan_library():
+def scan_library(type="video"):
     while not xbmc.abortRequested and \
      (xbmc.getCondVisibility('Library.IsScanning') or \
      xbmc.getCondVisibility('Window.IsActive(progressdialog)')):
         xbmc.sleep(1000)
-    xbmc.executebuiltin('UpdateLibrary(video)')
+    xbmc.executebuiltin('UpdateLibrary({0})'.format(type))
     
 def get_movie_from_library(imdbnumber):
     imdbnumber = str(imdbnumber)
