@@ -17,7 +17,8 @@ from lastfm import lastfm
 from addon import update_library
 from settings import UPDATE_LIBRARY_INTERVAL, SETTING_MUSIC_LIBRARY_FOLDER
 
-from meta.gui import dialogs
+import xbmcgui
+from language import get_string as _
 
 player = VideoPlayer()
 
@@ -128,13 +129,21 @@ class Monitor(xbmc.Monitor):
 
 
     def add_folder_to_music_database(self, music_folder):
+        pDialog = xbmcgui.DialogProgress()
+        pDialog.create(_('Meta'), _('adding music to database'))
         self.setup_database_connection()
         music_folder = xbmc.translatePath(music_folder)  # translate from special:// to absolute
         for dirName, subdirList, fileList in os.walk(music_folder):
             pathId = self.get_pathId(dirName)
             if not pathId:
                 continue
+
+            fname_index = 0
+            fileList_size = len(fileList)
             for fname in fileList:
+                if (pDialog.iscanceled()): return
+                percent = (fname_index / fileList_size) * 100
+                pDialog.update(int(percent), '{0} {1} ...'.format(_("Importing"),dirName))
                 if fname.endswith("strm"):
                     dirnameparts = dirName.split(os.sep)
                     artist = dirnameparts[-2]
@@ -154,6 +163,7 @@ class Monitor(xbmc.Monitor):
                     songId = self.get_songId(albumId, pathId, artist, song, song_number, fname)
                     self.add_songArtist(songId, artistId, artist)
                     conn.commit()
+                fname_index += 1
 
     def setup_database_connection(self):
         global c
