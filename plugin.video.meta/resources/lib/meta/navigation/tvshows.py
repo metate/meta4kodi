@@ -414,8 +414,12 @@ def list_trakt_episodes(result, with_time=False):
             episode = item['episode']
         else:
             episode = item
+        
+        if episode['show']:
+            id = episode['show']['ids'].get('tvdb')
+        else:
+            id = episode["ids"].get("tvdb")
             
-        id = episode["ids"].get("tvdb")
         if not id:
             continue
         
