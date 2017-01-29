@@ -1,6 +1,7 @@
 import os
 import copy
 import time
+import json
 from xbmcswift2 import xbmc, xbmcvfs
 
 from meta import plugin, import_tmdb, import_tvdb, LANG
@@ -405,8 +406,8 @@ def list_trakt_tvshows(results):
     items = [make_tvshow_item(show) for show in shows if show.get('tvdb_id')]
     return items
 
-def list_trakt_episodes(result, with_time=False):    
-    genres_dict = trakt_get_genres()
+def list_trakt_episodes(result, with_time=False): 
+    import_tvdb()   
     
     items = []
     for item in result:
@@ -414,29 +415,21 @@ def list_trakt_episodes(result, with_time=False):
             episode = item['episode']
         else:
             episode = item
-        
-        if episode['show']:
-            id = episode['show']['ids'].get('tvdb')
-        else:
-            id = episode["ids"].get("tvdb")
             
+        id = episode["ids"].get("tvdb")
+        if(episode["show"]):
+            id = episode["show"]["ids"].get("tvdb")
+        
         if not id:
             continue
         
         season_num = episode["season"]
         episode_num = episode["number"]
         
-        info = get_tvshow_metadata_trakt(item["show"], genres_dict)
-        info['season'] = episode["season"] 
-        info['episode'] = episode["number"]
-        info['title'] = episode["title"]
-        info['aired'] = episode.get('first_aired','')
-        info['premiered'] = episode.get('first_aired','')
-        info['rating'] = episode.get('rating', '')
-        info['plot'] = episode.get('overview','')
-        info['tagline'] = episode.get('tagline')
-        info['votes'] = episode.get('votes','')
-        #info['poster'] = episode['images']['poster']['thumb']
+        show = tvdb.get_show(id, full=True)
+        info = get_tvshow_metadata_tvdb(show)
+        season_info = get_season_metadata_tvdb(info, show[season_num], banners=False)
+        episode_info = get_episode_metadata_tvdb(season_info, show[season_num][episode_num])
 
         label = "{0} - S{1:02d}E{2:02d} - {3}".format(item["show"]["title"], season_num, episode_num, episode["title"])
 
@@ -464,14 +457,14 @@ def list_trakt_episodes(result, with_time=False):
         items.append({'label': label,
                       'path': plugin.url_for("tv_play", id=id, season=season_num, episode=episode_num, mode='default'),
                       'context_menu': context_menu,
-                      'info': info,
+                      'info': episode_info,
                       'is_playable': True,
                       'info_type': 'video',
                       'stream_info': {'video': {}},
-                      'thumbnail': info['poster'],
-                      'poster': info['poster'],
+                      'thumbnail': episode_info['poster'],
+                      'poster': episode_info['poster'],
                       'icon': "DefaultVideo.png",
-                      'properties' : {'fanart_image' : info['fanart']},
+                      'properties' : {'fanart_image' : episode_info['fanart']},
                       })
         
     plugin.set_content('episodes')
