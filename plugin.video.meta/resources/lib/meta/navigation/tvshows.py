@@ -431,6 +431,9 @@ def list_trakt_episodes(result, with_time=False):
         season_info = get_season_metadata_tvdb(info, show[season_num], banners=False)
         episode_info = get_episode_metadata_tvdb(season_info, show[season_num][episode_num])
 
+        if episode.get("rating",0) == 0:
+            episode_info = info
+
         label = "{0} - S{1:02d}E{2:02d} - {3}".format(item["show"]["title"], season_num, episode_num, episode["title"])
 
         if with_time and info['premiered']:
