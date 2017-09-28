@@ -5,27 +5,41 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kodi Meta Addons\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2016-02-21 19:17+0200\n"
-"Language-Team: Hebrew\n"
+"PO-Revision-Date: 2017-09-28 11:19+0300\n"
+"Last-Translator: A. Dambledore\n"
+"Language-Team: Eng2Heb\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: he_IL\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Last-Translator: \n"
-"X-Generator: Poedit 1.8.7\n"
 
 msgctxt "#30000"
 msgid "General"
 msgstr "כללי"
 
+msgctxt "#30001"
+msgid "Move down"
+msgstr "רד למטה"
+
+msgctxt "#30002"
+msgid "Move up"
+msgstr "עבור למעלה"
+
+msgctxt "#30003"
+msgid "Clear channels"
+msgstr "נקה ערוצים"
+
+msgctxt "#30004"
+msgid "Remove channel"
+msgstr "הסר ערוץ"
+
 msgctxt "#30010"
 msgid "Players URL"
-msgstr "כתובת לעדכון נגנים"
+msgstr "קישור נגני רשת"
 
 msgctxt "#30012"
 msgid "Install from URL"
-msgstr "התקן נגנים מכתובת"
+msgstr "להתקין מקישור"
 
 msgctxt "#30100"
 msgid "Movies"
@@ -37,11 +51,11 @@ msgstr "אפשר נגני סרטים"
 
 msgctxt "#30120"
 msgid "Preferred movie player"
-msgstr "נגן סרטים מועדף"
+msgstr "נגנים סרטים מועדפים"
 
 msgctxt "#30121"
 msgid "Preferred movie player from library"
-msgstr "נגן סרטים מועדף בניגון מספריה"
+msgstr "נגנים סרטים מועדפים מהספרייה"
 
 msgctxt "#30200"
 msgid "TV Shows"
@@ -53,27 +67,27 @@ msgstr "אפשר נגני סדרות"
 
 msgctxt "#30210"
 msgid "Preferred TV player"
-msgstr "נגן סדרות מועדף"
+msgstr "נגנים סדרות מועדפים"
 
 msgctxt "#30211"
 msgid "Preferred TV player from library"
-msgstr "נגן סדרות מועדף בניגון מספריה"
+msgstr "נגנים סדרות מועדפים מהספרייה"
 
 msgctxt "#30300"
 msgid "Library"
-msgstr "ספריה"
+msgstr "ספרייה"
 
 msgctxt "#30301"
 msgid "Library folder"
-msgstr "תיקיית ספריה"
+msgstr "תיקיית ספרייה"
 
 msgctxt "#30302"
 msgid "Library folder"
-msgstr "תיקיית ספריה"
+msgstr "תיקיית ספרייה"
 
 msgctxt "#30303"
 msgid "Update library"
-msgstr "עדכן ספריה"
+msgstr "עדכון הספרייה"
 
 msgctxt "#30400"
 msgid "Advanced"
@@ -81,43 +95,95 @@ msgstr "מתקדם"
 
 msgctxt "#30401"
 msgid "Clear cache"
-msgstr "נקה זיכרון מטמון"
+msgstr "ניקוי מטמון"
 
 msgctxt "#30304"
 msgid "Automatic movies library server"
-msgstr "שרת עבור קיר סרטים אוטומטי"
+msgstr "שרת ספריית סרטים אוטומטי"
 
 msgctxt "#30305"
 msgid "Set added time to release date"
-msgstr "קבע זמן הוספה כזמן שחרור הסרט או פרק"
+msgstr "הגדר את זמן ההוספה לתאריך השחרור"
 
 msgctxt "#30402"
 msgid "Use simple selection dialog"
-msgstr "השתמש בדיאלוג בחירה פשוט"
+msgstr "השתמש בדו שיח עם בחירה פשוטה"
 
 msgctxt "#30404"
 msgid "Number of simultaneous searches"
-msgstr "מספר חיפושים לבצע במקביל"
+msgstr "מספר החיפושים בו זמנית"
 
 msgctxt "#30410"
 msgid "Attempt to hide dialogs while Meta is searching"
-msgstr "הסתר חלונות משנה בזמן שהתוסף מבצע חיפוש"
+msgstr "נסה להסתיר דיאלוגים בזמן ש- Meta מחפש"
 
 msgctxt "#30411"
 msgid "Hide progress dialogs"
-msgstr "הסתר חלון התקדמות"
+msgstr "הסתר תיבות דו-שיח של ההתקדמות"
 
 msgctxt "#30412"
 msgid "Hide information dialogs"
-msgstr "הסתר התראות מידע"
+msgstr "הסתר תיבות דו-שיח של המידע"
 
 msgctxt "#30413"
 msgid "Hide keyboard dialog"
-msgstr "הסתר מקלדת"
+msgstr "הסתר את דו-שיח לוח המקשים"
+
+msgctxt "#30414"
+msgid "Trakt watchlist"
+msgstr "רשימת הצפייה בטראקט"
+
+msgctxt "#30415"
+msgid "Please go to https://trakt.tv/activate and enter the code"
+msgstr "עבור אל https://trakt.tv/activate והזן את הקוד"
+
+msgctxt "#30416"
+msgid "Next episodes"
+msgstr "הפרקים הבאים"
+
+msgctxt "#30417"
+msgid "Authenticate Trakt"
+msgstr "אימות זהות בטארקט"
+
+msgctxt "#30418"
+msgid "Add all to library"
+msgstr "הוסף את הכל לספריה"
+
+msgctxt "#30419"
+msgid "Are you sure you want to add your entire Trakt collection to Kodi library?"
+msgstr "האם אתה בטוח שברצונך להוסיף את כל אוסף הטראקט לספריית הקודי?"
+
+msgctxt "#30420"
+msgid "Trakt collection"
+msgstr "אוסף טראקט"
+
+msgctxt "#30421"
+msgid "Are you sure you want to add your entire Trakt watchlist to Kodi library?"
+msgstr "האם אתה בטוח שברצונך להוסיף את כל רשימת הצפייה בטראקט לספריית הקודי?"
+
+msgctxt "#30422"
+msgid "You must authenticate with Trakt. Do you want to authenticate now?"
+msgstr "אתה חייב לאמת זהות עם טראקט. האם ברצונך לבצע אימות עכשיו?"
+
+msgctxt "#30423"
+msgid "My calendar"
+msgstr "לוח השנה שלי"
+
+msgctxt "#30500"
+msgid "Live"
+msgstr "שידור חי"
+
+msgctxt "#30501"
+msgid "Enable live players"
+msgstr "אפשר נגנים חיים"
+
+msgctxt "#30510"
+msgid "Prefered live player"
+msgstr "נגנים חיים מועדפים"
 
 msgctxt "#30600"
 msgid "Would you like to automatically set Meta as a movies video source?"
-msgstr "האם ברצונך שאגדיר באופן אוטומטי את ספריית התוסף כמקור סרטי וידאו?"
+msgstr "האם ברצונך להגדיר באופן אוטומטי את Meta כמקור וידאו לסרטים?"
 
 msgctxt "#30601"
 msgid "Genres"
@@ -125,7 +191,7 @@ msgstr "סגנונות"
 
 msgctxt "#30602"
 msgid "Select stream..."
-msgstr "בחר מקור הזרמה..."
+msgstr "בחר הזרמה..."
 
 msgctxt "#30603"
 msgid "Show info"
@@ -133,23 +199,23 @@ msgstr "הצג מידע"
 
 msgctxt "#30604"
 msgid "Video not found :("
-msgstr "וידאו לא נמצא :("
+msgstr "הוידאו לא נמצא :("
 
 msgctxt "#30605"
 msgid "Add to library"
-msgstr "הוסף לספריה"
+msgstr "הוסף לספרייה"
 
 msgctxt "#30606"
 msgid "Do you want to remove your existing players first?"
-msgstr "האם ברצונך להסיר נגנים ישנים תחילה?"
+msgstr "האם ברצונך להסיר את הנגנים הקיימים שלך תחילה?"
 
 msgctxt "#30607"
 msgid "Enter password"
-msgstr "הכנס סיסמא"
+msgstr "הכנס סיסמה"
 
 msgctxt "#30608"
 msgid "Players updated"
-msgstr "נגנים עודכנו"
+msgstr "הנגנים עודכנו"
 
 msgctxt "#30609"
 msgid "Enable players"
@@ -161,7 +227,7 @@ msgstr "עונה"
 
 msgctxt "#30612"
 msgid "Top rated"
-msgstr "המדורגים ביותר"
+msgstr "דירוג גבוה"
 
 msgctxt "#30613"
 msgid "Blockbusters"
@@ -169,7 +235,7 @@ msgstr "שוברי קופות"
 
 msgctxt "#30614"
 msgid "On the air"
-msgstr "משודר כעת"
+msgstr "באוויר"
 
 msgctxt "#30615"
 msgid "Update players"
@@ -177,7 +243,7 @@ msgstr "עדכן נגנים"
 
 msgctxt "#30616"
 msgid "Would you like to automatically set Meta as a tv shows source?"
-msgstr "האם ברצונך שאגדיר באופן אוטומטי את ספריית התוסף כמקור תוכניות טלוויזיה?"
+msgstr "האם אתה רוצה להגדיר באופן אוטומטי את-Meta כמקור לסדרות?"
 
 msgctxt "#30617"
 msgid "Search"
@@ -185,7 +251,7 @@ msgstr "חיפוש"
 
 msgctxt "#30618"
 msgid "search for"
-msgstr "חפש את"
+msgstr "חפש"
 
 msgctxt "#30619"
 msgid "Next >>"
@@ -197,19 +263,19 @@ msgstr "שגיאה"
 
 msgctxt "#30621"
 msgid "Popular"
-msgstr "פופולרי"
+msgstr "פופולארי"
 
 msgctxt "#30622"
 msgid "Select default player"
-msgstr "בחר נגן ברירת מחדל"
+msgstr "בחר נגן ברירת המחדל"
 
 msgctxt "#30623"
 msgid "Failed to update players"
-msgstr "נכשל בעדכון נגנים"
+msgstr "נכשל בעדכון הנגנים"
 
 msgctxt "#30624"
 msgid "In theatres"
-msgstr "בקולנוע"
+msgstr "בבתי הקולנוע"
 
 msgctxt "#30625"
 msgid "Select player"
@@ -221,78 +287,8 @@ msgstr "אזהרה"
 
 msgctxt "#30627"
 msgid "Library setup"
-msgstr "הגדרת ספריה"
+msgstr "הגדרת ספרייה"
 
 msgctxt "#30628"
 msgid "Play with..."
-msgstr "נגן באמצעות..."
-
-msgctxt "#30414"
-msgid "Trakt watchlist"
-msgstr "Trakt רשימת צפייה"
-
-msgctxt "#30415"
-msgid "Please go to https://trakt.tv/activate and enter the code"
-msgstr "גש לאתר הבא מכל מכשיר והכנס את הקוד המופיע מטה https://trakt.tv/activate"
-
-msgctxt "#30416"
-msgid "Next episodes"
-msgstr "פרקים הבאים"
-
-msgctxt "#30417"
-msgid "Authenticate Trakt"
-msgstr "היכנס לחשבון Trakt"
-
-msgctxt "#30418"
-msgid "Add all to library"
-msgstr "הוסף הכל לספריה"
-
-msgctxt "#30419"
-msgid ""
-"Are you sure you want to add your entire Trakt collection to Kodi library?"
-msgstr "האם אתה בטוח שברצונך להוסיף את כל האוסף לספרית קודי?"
-
-msgctxt "#30420"
-msgid "Trakt collection"
-msgstr "Trakt אוסף"
-
-msgctxt "#30421"
-msgid ""
-"Are you sure you want to add your entire Trakt watchlist to Kodi library?"
-msgstr "האם אתה בטוח שברצונך להוסיף את כל רשימת הצפייה לספרית קודי?"
-
-msgctxt "#30422"
-msgid "You must authenticate with Trakt. Do you want to authenticate now?"
-msgstr "עדיין לא נכנסת לחשבון Trakt. האם ברצונך לעשות זאת כעת?"
-
-msgctxt "#30423"
-msgid "My calendar"
-msgstr "לוח השנה שלי"
-
-msgctxt "#30500"
-msgid "Live"
-msgstr "לייב"
-
-msgctxt "#30501"
-msgid "Enable Live Players"
-msgstr "אפשר נגני לייב"
-
-msgctxt "#30510"
-msgid "Prefered Live Player"
-msgstr "נגן לייב מועדף"
-
-msgctxt "#30001"
-msgid "Move down"
-msgstr "הזז מטה"
-
-msgctxt "#30002"
-msgid "Move up"
-msgstr "הזז מעלה"
-
-msgctxt "#30003"
-msgid "Clear channels"
-msgstr "נקה כל הערוצים"
-
-msgctxt "#30004"
-msgid "Remove channel"
-msgstr "הסר ערוץ"
+msgstr "נגן עם..."
