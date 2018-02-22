@@ -237,7 +237,7 @@ class Lister:
                 break
 
             # Send keyboard data iff not last guidance
-            # TODO backward compatibility
+            #   TODO backward compatibility
             if hint.startswith("keyboard:"):
                 hint = u"@" + hint
                 

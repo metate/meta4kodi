@@ -20,6 +20,7 @@ from meta.play.players import get_players, ADDON_SELECTOR
 import meta.navigation.movies
 import meta.navigation.tvshows
 import meta.navigation.live
+import meta.navigation.music
 import meta.navigation.lists
 from meta.navigation.base import get_icon_path
 from meta.play.base import active_players
@@ -48,6 +49,11 @@ def root():
             'label': _("Live"),
             'path': plugin.url_for("live"),
             'icon': get_icon_path("live"),
+        },
+        {
+            'label': _("Music"),
+            'path': plugin.url_for("music"),
+            'icon': get_icon_path("music"),
         },
         {
             'label': _("Lists"),
@@ -119,6 +125,10 @@ def settings_set_players(media):
             plugin.set_setting(SETTING_TV_ENABLED_PLAYERS, selected)
         elif media == "live":
             plugin.set_setting(SETTING_LIVE_ENABLED_PLAYERS, selected)
+        elif media == "music":
+            plugin.set_setting(SETTING_MUSIC_ENABLED_PLAYERS,selected)
+        elif media == "music_video":
+            plugin.set_setting(SETTING_MUSIC_VIDEO_ENABLED_PLAYERS, selected)
         else:
             raise Exception("invalid parameter %s" % media)
     
@@ -136,6 +146,12 @@ def settings_set_default_player(media):
             plugin.set_setting(SETTING_MOVIES_DEFAULT_PLAYER, selected)
         elif media == "tvshows":
             plugin.set_setting(SETTING_TV_DEFAULT_PLAYER, selected)
+        elif media == "live":
+            plugin.set_setting(SETTING_LIVE_DEFAULT_PLAYER, selected)
+        elif media == "music":
+            plugin.set_setting(SETTING_MUSIC_DEFAULT_PLAYER, selected)
+        elif media == "music_video":
+            plugin.set_setting(SETTING_MUSIC_VIDEO_DEFAULT_PLAYER, selected)
         else:
             raise Exception("invalid parameter %s" % media)
     
