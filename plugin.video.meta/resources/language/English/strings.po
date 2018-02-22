@@ -19,6 +19,22 @@ msgctxt "#30000"
 msgid "General"
 msgstr ""
 
+msgctxt "#30001"
+msgid "Move down"
+msgstr ""
+
+msgctxt "#30002"
+msgid "Move up"
+msgstr ""
+
+msgctxt "#30003"
+msgid "Clear channels"
+msgstr ""
+
+msgctxt "#30004"
+msgid "Remove channel"
+msgstr ""
+
 msgctxt "#30010"
 msgid "Players URL"
 msgstr ""
@@ -113,6 +129,58 @@ msgstr ""
 
 msgctxt "#30413"
 msgid "Hide keyboard dialog"
+msgstr ""
+
+msgctxt "#30414"
+msgid "Trakt watchlist"
+msgstr ""
+
+msgctxt "#30415"
+msgid "Please go to https://trakt.tv/activate and enter the code"
+msgstr ""
+
+msgctxt "#30416"
+msgid "Next episodes"
+msgstr ""
+
+msgctxt "#30417"
+msgid "Authenticate Trakt"
+msgstr ""
+
+msgctxt "#30418"
+msgid "Add all to library"
+msgstr ""
+
+msgctxt "#30419"
+msgid "Are you sure you want to add your entire Trakt collection to Kodi library?"
+msgstr ""
+
+msgctxt "#30420"
+msgid "Trakt collection"
+msgstr ""
+
+msgctxt "#30421"
+msgid "Are you sure you want to add your entire Trakt watchlist to Kodi library?"
+msgstr ""
+
+msgctxt "#30422"
+msgid "You must authenticate with Trakt. Do you want to authenticate now?"
+msgstr ""
+
+msgctxt "#30423"
+msgid "My calendar"
+msgstr ""
+
+msgctxt "#30500"
+msgid "Live"
+msgstr ""
+
+msgctxt "#30501"
+msgid "Enable live players"
+msgstr ""
+
+msgctxt "#30510"
+msgid "Prefered live player"
 msgstr ""
 
 msgctxt "#30600"
@@ -225,74 +293,4 @@ msgstr ""
 
 msgctxt "#30628"
 msgid "Play with..."
-msgstr ""
-
-msgctxt "#30414"
-msgid "Trakt watchlist"
-msgstr ""
-
-msgctxt "#30415"
-msgid "Please go to https://trakt.tv/activate and enter the code"
-msgstr ""
-
-msgctxt "#30416"
-msgid "Next episodes"
-msgstr ""
-
-msgctxt "#30417"
-msgid "Authenticate Trakt"
-msgstr ""
-
-msgctxt "#30418"
-msgid "Add all to library"
-msgstr ""
-
-msgctxt "#30419"
-msgid ""
-"Are you sure you want to add your entire Trakt collection to Kodi library?"
-msgstr ""
-
-msgctxt "#30420"
-msgid "Trakt collection"
-msgstr ""
-
-msgctxt "#30421"
-msgid ""
-"Are you sure you want to add your entire Trakt watchlist to Kodi library?"
-msgstr ""
-
-msgctxt "#30422"
-msgid "You must authenticate with Trakt. Do you want to authenticate now?"
-msgstr ""
-
-msgctxt "#30423"
-msgid "My calendar"
-msgstr ""
-
-msgctxt "#30500"
-msgid "Live"
-msgstr ""
-
-msgctxt "#30501"
-msgid "Enable Live Players"
-msgstr ""
-
-msgctxt "#30510"
-msgid "Prefered Live Player"
-msgstr ""
-
-msgctxt "#30001"
-msgid "Move down"
-msgstr ""
-
-msgctxt "#30002"
-msgid "Move up"
-msgstr ""
-
-msgctxt "#30003"
-msgid "Clear channels"
-msgstr ""
-
-msgctxt "#30004"
-msgid "Remove channel"
 msgstr ""

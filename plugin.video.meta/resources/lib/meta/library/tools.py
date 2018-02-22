@@ -52,7 +52,7 @@ def get_episode_from_library(imdbnumber, season, episode):
             return {'label': ep['title'], 'path': ep['file']}
     return None
 
-def add_source(source_name, source_path, source_content):    
+def add_source(source_name, source_path, source_content, source_thumbnail):    
     xml_file = xbmc.translatePath('special://profile/sources.xml')
     if not os.path.exists(xml_file):
         with open(xml_file, "w") as f:
@@ -78,12 +78,12 @@ def add_source(source_name, source_path, source_content):
     if existing_source and existing_source != source_path:
         _remove_source_content(existing_source)
     
-    if _add_source_xml(xml_file, source_name, source_path):
+    if _add_source_xml(xml_file, source_name, source_path, source_thumbnail):
         _set_source_content(source_content)
     
 #########   XML functions   #########
 
-def _add_source_xml(xml_file, name, path):
+def _add_source_xml(xml_file, name, path, thumbnail):
     tree = ET.parse(xml_file)
     root = tree.getroot()
     sources = root.find('video')
@@ -93,26 +93,38 @@ def _add_source_xml(xml_file, name, path):
     for source in sources.findall('source'):
         xml_name = source.find("name").text
         xml_path = source.find("path").text
-        if xml_name == name or xml_path == path:
+        xml_thumbnail = source.find("thumbnail").text
+        if xml_name == name or xml_path == path or xml_thumbnail == thumbnail:
             existing_source = source
             break
             
     if existing_source is not None:
         xml_name = source.find("name").text
         xml_path = source.find("path").text
-        if xml_name == name and xml_path == path:
+        xml_thumbnail = source.find("thumbnail").text
+        if xml_name == name and xml_path == path and xml_thumbnail == thumbnail:
             return False
         elif xml_name == name:
             source.find("path").text = path
+            source.find("thumbnail").text = thumbnail
+        elif xml_path == path:
+            source.find("name").text = name
+            source.find("thumbnail").text = thumbnail
         else:
+            source.find("path").text = path
             source.find("name").text = name
     else:
         new_source = ET.SubElement(sources, 'source')
         new_name = ET.SubElement(new_source, 'name')
         new_name.text = name
         new_path = ET.SubElement(new_source, 'path')
+        new_thumbnail = ET.SubElement(new_source, 'thumbnail')
+        new_allowsharing = ET.SubElement(new_source, 'allowsharing')
         new_path.attrib['pathversion'] = "1"
+        new_thumbnail.attrib['pathversion'] = "1"
         new_path.text = path
+        new_thumbnail.text = thumbnail
+        new_allowsharing.text = "true"
     
     _indent_xml(root)
     tree.write(xml_file)

@@ -19,6 +19,22 @@ msgctxt "#30000"
 msgid "General"
 msgstr "Algemeen"
 
+msgctxt "#30001"
+msgid "Move down"
+msgstr "Verplaats omlaag"
+
+msgctxt "#30002"
+msgid "Move up"
+msgstr "Verplaats omhoog"
+
+msgctxt "#30003"
+msgid "Clear channels"
+msgstr "Kanalen verwijderen"
+
+msgctxt "#30004"
+msgid "Remove channel"
+msgstr "Verwijder kanaal"
+
 msgctxt "#30010"
 msgid "Players URL"
 msgstr "Spelers URL"
@@ -114,6 +130,58 @@ msgstr "Verberg informatie dialogen"
 msgctxt "#30413"
 msgid "Hide keyboard dialog"
 msgstr "Verberg keyboard dialogen"
+
+msgctxt "#30414"
+msgid "Trakt watchlist"
+msgstr "Trakt kijklijst"
+
+msgctxt "#30415"
+msgid "Please go to https://trakt.tv/activate and enter the code"
+msgstr "Ga naar https://trakt.tv/activate en vul de code in"
+
+msgctxt "#30416"
+msgid "Next episodes"
+msgstr "Volgende afleveringen"
+
+msgctxt "#30417"
+msgid "Authenticate Trakt"
+msgstr "Trakt authoriseren"
+
+msgctxt "#30418"
+msgid "Add all to library"
+msgstr "Alles aan bibliotheek toevoegen"
+
+msgctxt "#30419"
+msgid "Are you sure you want to add your entire Trakt collection to Kodi library?"
+msgstr "Weet u zeker dat u uw hele Trakt collectie toe wilt voegen aan Kodi bibliotheek?"
+
+msgctxt "#30420"
+msgid "Trakt collection"
+msgstr "Trakt collectie"
+
+msgctxt "#30421"
+msgid "Are you sure you want to add your entire Trakt watchlist to Kodi library?"
+msgstr "Weet u zeker dat u uw hele Trakt kijklijst toe wilt voegen aan Kodi bibliotheek?"
+
+msgctxt "#30422"
+msgid "You must authenticate with Trakt. Do you want to authenticate now?"
+msgstr "U dient Trakt te authoriseren. Wilt u nu authoriseren?"
+
+msgctxt "#30423"
+msgid "My calendar"
+msgstr "Mijn kalender"
+
+msgctxt "#30500"
+msgid "Live"
+msgstr "Live"
+
+msgctxt "#30501"
+msgid "Enable live players"
+msgstr "Live spelers inschakelen"
+
+msgctxt "#30510"
+msgid "Prefered live player"
+msgstr "Voorkeurs live speler"
 
 msgctxt "#30600"
 msgid "Would you like to automatically set Meta as a movies video source?"
